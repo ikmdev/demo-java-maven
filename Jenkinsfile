@@ -1,5 +1,7 @@
 @Library("titan-library") _
 
+import groovyx.net.http.HTTPBuilder
+
 pipeline {
 
     agent any
@@ -46,6 +48,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: GITLAB_CREDS_ID, passwordVariable: 'token', usernameVariable: 'user')]) {
                         echo "${user}"
+                        def http = new HTTPBuilder('https://google.com')
                     }
                 }
             }
