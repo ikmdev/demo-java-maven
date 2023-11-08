@@ -60,6 +60,7 @@ pipeline {
                         echo "Done request"
 
                         def jsonResponse = readJSON text: response
+                        echo "${jsonResponse}"
 
                     }
                 }
