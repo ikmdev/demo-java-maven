@@ -1,6 +1,7 @@
 @Library("titan-library") _
 
-
+@Grab('io.github.http-builder-ng:http-builder-ng-core:1.0.4')
+@Grab('org.jsoup:jsoup:1.9.2')
 
 pipeline {
 
@@ -48,7 +49,8 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: GITLAB_CREDS_ID, passwordVariable: 'token', usernameVariable: 'user')]) {
                         echo "${user}"
-                        def postmanGet = new URL('https://postman-echo.com/get')
+                        def releaseByTagUrl = GITLAB_RELEASE_API + "/v1.0.0"
+                        def postmanGet = new URL(releaseByTagUrl)
                         def getConnection = postmanGet.openConnection()
                         getConnection.requestMethod = 'GET'
                         assert getConnection.responseCode == 200
