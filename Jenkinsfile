@@ -1,6 +1,6 @@
 @Library("titan-library") _
 
-import groovyx.net.http.HTTPBuilder
+
 
 pipeline {
 
@@ -48,7 +48,10 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: GITLAB_CREDS_ID, passwordVariable: 'token', usernameVariable: 'user')]) {
                         echo "${user}"
-                        def http = new HTTPBuilder('https://google.com')
+                        def postmanGet = new URL('https://postman-echo.com/get')
+                        def getConnection = postmanGet.openConnection()
+                        getConnection.requestMethod = 'GET'
+                        assert getConnection.responseCode == 200
                     }
                 }
             }
