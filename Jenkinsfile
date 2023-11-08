@@ -64,6 +64,35 @@ pipeline {
 
                         if (jsonResponse['message'] && jsonResponse['message'].contains('Not Found')) {
                             echo "This release does not exist yet"
+
+                            def releaseVer = "1.0.0"
+                            def tag = "v${releaseVer}"
+
+                            def data = """
+                            {
+                                "name": "Release ${releaseVer}",
+                                "tag_name": "${tag}",
+                                "description": "Release ${releaseVer} from tag ${tag}"
+                            }
+                            """
+
+                            def postResponse = sh(
+                                script: """
+                                curl -L \
+                                    -H "PRIVATE-TOKEN: ${token}" \
+                                    -H "Content-Type: application/json" \
+                                    -X POST \
+                                    --data ${data} \
+                                    ${GITLAB_RELEASE_API}
+                                """, 
+                                returnStdout: true
+                            ).trim()
+
+                            echo "Done attempting to create Release"
+
+                            def jsonPostResponse = readJSON text: postResponse
+                            echo "${jsonPostResponse}"
+
                         } else {
                             echo "Unexpected result"
                             fail()
