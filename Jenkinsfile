@@ -82,7 +82,7 @@ pipeline {
                                     -H "PRIVATE-TOKEN: ${token}" \
                                     -H "Content-Type: application/json" \
                                     -X POST \
-                                    --data ${data} \
+                                    --data "${data}" \
                                     ${GITLAB_RELEASE_API}
                                 """, 
                                 returnStdout: true
