@@ -28,6 +28,19 @@ pipeline {
             }
         }
 
+        // GitLab_API_Token
+
+        stage('Release') {
+            
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'GitLab_API_Token', variable: 'token')]) {
+                        echo "${token}"
+                    }
+                }
+            }
+        }
+
         
         stage('Cleanup Workspace') {
             
