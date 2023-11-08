@@ -62,6 +62,13 @@ pipeline {
                         def jsonResponse = readJSON text: response
                         echo "${jsonResponse}"
 
+                        if (jsonResponse['message'] && jsonResponse['message'].contains('Not Found')) {
+                            echo "This release does not exist yet"
+                        } else {
+                            echo "Unexpected result"
+                            fail()
+                        }
+
                     }
                 }
             }
