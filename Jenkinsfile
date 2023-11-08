@@ -40,14 +40,12 @@ pipeline {
             }
         }
 
-        // GitLab_API_Token
-
         stage('Release') {
             
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: GITLAB_CREDS_ID, passwordVariable: 'token', usernameVariable: 'user')]) {
-                        echo "${token}"
+                        echo "${user}"
                     }
                 }
             }
