@@ -68,7 +68,7 @@ pipeline {
                             def releaseVer = "1.0.0"
                             def tag = "v${releaseVer}"
 
-                            def data = """{"name": "Release ${releaseVer}","tag_name": "${tag}", "description": "Release ${releaseVer} from tag ${tag}" }"""
+                            def data = "{\"name\": \"Release ${releaseVer}\",\"tag_name\": \"${tag}\", \"description\": \"Release ${releaseVer} from tag ${tag}\" }"
 
                             def postResponse = sh(
                                 script: """
@@ -76,7 +76,7 @@ pipeline {
                                     -H "PRIVATE-TOKEN: ${token}" \
                                     -H "Content-Type: application/json" \
                                     -X POST \
-                                    --data "${data}" \
+                                    --data '${data}' \
                                     ${GITLAB_RELEASE_API}
                                 """, 
                                 returnStdout: true
