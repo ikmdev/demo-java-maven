@@ -19,6 +19,8 @@ pipeline {
         GITLAB_REPO         = "https://gitlab.tinkarbuild.com/${GITLAB_OWNER}/${REPO_NAME}.git"
         GITLAB_RELEASE_API  = "https://gitlab.tinkarbuild.com/api/v4/projects/${GITLAB_OWNER}%2F${REPO_NAME}/releases"
         GITLAB_CREDS_ID     = 'vault-gitlab-user-pat'
+
+        TAG_VERSION          = "1.0.1"
     }
 
 
@@ -46,7 +48,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: GITLAB_CREDS_ID, passwordVariable: 'token', usernameVariable: 'user')]) {
                         echo "GitLab User ${user}"
-                        def releaseByTagUrl = GITLAB_RELEASE_API + "/v1.0.1"
+                        def releaseByTagUrl = GITLAB_RELEASE_API + "/v" + TAG_VERSION
                         echo "GitLab API Release by Tag URL: ${releaseByTagUrl}"
 
                         def response = sh(
@@ -65,7 +67,7 @@ pipeline {
                         if (jsonResponse['message'] && jsonResponse['message'].contains('Not Found')) {
                             echo "This release does not exist yet"
 
-                            def releaseVer = "1.0.0"
+                            def releaseVer = "${TAG_VERSION}"
                             def tag = "v${releaseVer}"
 
                             def data = "{\"name\": \"Release ${releaseVer}\",\"tag_name\": \"${tag}\", \"description\": \"Release ${releaseVer} from tag ${tag}\" }"
