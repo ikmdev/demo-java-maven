@@ -46,7 +46,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: GITLAB_CREDS_ID, passwordVariable: 'token', usernameVariable: 'user')]) {
                         echo "GitLab User ${user}"
-                        def releaseByTagUrl = GITLAB_RELEASE_API + "/v1.0.0"
+                        def releaseByTagUrl = GITLAB_RELEASE_API + "/v1.0.1"
                         echo "GitLab API Release by Tag URL: ${releaseByTagUrl}"
 
                         def response = sh(
@@ -88,8 +88,7 @@ pipeline {
                             echo "${jsonPostResponse}"
 
                         } else {
-                            echo "Unexpected result"
-                            fail()
+                            error("Unexpected result")
                         }
 
                     }
