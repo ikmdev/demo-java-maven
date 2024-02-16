@@ -31,6 +31,10 @@ pipeline {
             )
     }
 
+    parameters {
+        string(name: 'feature_branch', defaultValue: '', description: 'Name of branch without feature/ prefix')
+    }
+
     stages {
 
         stage('Setup') {
@@ -42,61 +46,70 @@ pipeline {
             }
         }
 
-        stage('Release') {
+        stage('Branch') {
             
             steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: GITLAB_CREDS_ID, passwordVariable: 'token', usernameVariable: 'user')]) {
-                        echo "GitLab User ${user}"
-                        def releaseByTagUrl = GITLAB_RELEASE_API + "/v" + TAG_VERSION
-                        echo "GitLab API Release by Tag URL: ${releaseByTagUrl}"
-
-                        def response = sh(
-                            script: """
-                            curl -L \
-                                -H "PRIVATE-TOKEN: ${token}" \
-                                ${releaseByTagUrl}
-                            """, 
-                            returnStdout: true
-                        ).trim()
-                        echo "Done request"
-
-                        def jsonResponse = readJSON text: response
-                        echo "${jsonResponse}"
-
-                        if (jsonResponse['message'] && jsonResponse['message'].contains('Not Found')) {
-                            echo "This release does not exist yet"
-
-                            def releaseVer = "${TAG_VERSION}"
-                            def tag = "v${releaseVer}"
-
-                            def data = "{\"name\": \"Release ${releaseVer}\",\"tag_name\": \"${tag}\", \"description\": \"Release ${releaseVer} from tag ${tag}\" }"
-
-                            def postResponse = sh(
-                                script: """
-                                curl -L \
-                                    -H "PRIVATE-TOKEN: ${token}" \
-                                    -H "Content-Type: application/json" \
-                                    -X POST \
-                                    --data '${data}' \
-                                    ${GITLAB_RELEASE_API}
-                                """, 
-                                returnStdout: true
-                            ).trim()
-
-                            echo "Done attempting to create Release"
-
-                            def jsonPostResponse = readJSON text: postResponse
-                            echo "${jsonPostResponse}"
-
-                        } else {
-                            error("Unexpected result")
-                        }
-
-                    }
-                }
+                sh """
+                echo Feature ${feature_branch}
+                """
             }
         }
+
+        // stage('Release') {
+            
+        //     steps {
+        //         script {
+        //             withCredentials([usernamePassword(credentialsId: GITLAB_CREDS_ID, passwordVariable: 'token', usernameVariable: 'user')]) {
+        //                 echo "GitLab User ${user}"
+        //                 def releaseByTagUrl = GITLAB_RELEASE_API + "/v" + TAG_VERSION
+        //                 echo "GitLab API Release by Tag URL: ${releaseByTagUrl}"
+
+        //                 def response = sh(
+        //                     script: """
+        //                     curl -L \
+        //                         -H "PRIVATE-TOKEN: ${token}" \
+        //                         ${releaseByTagUrl}
+        //                     """, 
+        //                     returnStdout: true
+        //                 ).trim()
+        //                 echo "Done request"
+
+        //                 def jsonResponse = readJSON text: response
+        //                 echo "${jsonResponse}"
+
+        //                 if (jsonResponse['message'] && jsonResponse['message'].contains('Not Found')) {
+        //                     echo "This release does not exist yet"
+
+        //                     def releaseVer = "${TAG_VERSION}"
+        //                     def tag = "v${releaseVer}"
+
+        //                     def data = "{\"name\": \"Release ${releaseVer}\",\"tag_name\": \"${tag}\", \"description\": \"Release ${releaseVer} from tag ${tag}\" }"
+
+        //                     def postResponse = sh(
+        //                         script: """
+        //                         curl -L \
+        //                             -H "PRIVATE-TOKEN: ${token}" \
+        //                             -H "Content-Type: application/json" \
+        //                             -X POST \
+        //                             --data '${data}' \
+        //                             ${GITLAB_RELEASE_API}
+        //                         """, 
+        //                         returnStdout: true
+        //                     ).trim()
+
+        //                     echo "Done attempting to create Release"
+
+        //                     def jsonPostResponse = readJSON text: postResponse
+        //                     echo "${jsonPostResponse}"
+
+        //                 } else {
+        //                     error("Unexpected result")
+        //                 }
+
+        //             }
+        //         }
+        //     }
+        // }
 
         
         stage('Cleanup Workspace') {
