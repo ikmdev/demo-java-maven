@@ -50,7 +50,7 @@ pipeline {
             
             steps {
                 sh """
-                echo Feature ${feature_branch}
+                echo Feature ${params.feature_branch}
                 """
             }
         }
