@@ -32,26 +32,54 @@ pipeline {
     }
 
     parameters {
-        choice(name: 'action', choices: ['start','resume','finish'], description: 'Build Action. Start = starts new feature, Resume = resumes feature after finish, Finish = ends feature')
+        choice(name: 'action', choices: ['start','resume','finish'], description: 'Build Action. Start = starts new feature, Resume = resumes feature after finish, Finish = ends feature. Finish/Resume - feature branch must already exist.')
         string(name: 'feature_branch', defaultValue: '', description: 'Name of branch without feature/ prefix. Must follow ABC-123_description format. ABC = JIRA prefix.')
     }
 
     stages {
 
         stage('Setup') {
-            
             steps {
                 sh """
                 printenv
+                echo Action ${params.action} with ${params.feature_branch}
                 """
             }
         }
 
-        stage('Branch') {
+        stage('Start Branch') {
+            when {
+                branch 'main'
+                expression { return params.action == 'start' }
+            }
             
             steps {
                 sh """
-                echo Action ${params.action} with ${params.feature_branch}
+                echo Start Branch ${params.feature_branch}
+                """
+            }
+        }
+
+        stage('Resume Branch') {
+            when {
+                expression { return params.action == 'resume' }
+            }
+            
+            steps {
+                sh """
+                echo Resume Branch ${params.feature_branch}
+                """
+            }
+        }
+
+        stage('End Branch') {
+            when {
+                expression { return params.action == 'finish' }
+            }
+            
+            steps {
+                sh """
+                echo End Branch ${params.feature_branch}
                 """
             }
         }
