@@ -32,7 +32,8 @@ pipeline {
     }
 
     parameters {
-        string(name: 'feature_branch', defaultValue: '', description: 'Name of branch without feature/ prefix')
+        choice(name: 'action', choices: ['start','resume','finish'], description: 'Build Action. Start = starts new feature, Resume = resumes feature after finish, Finish = ends feature')
+        string(name: 'feature_branch', defaultValue: '', description: 'Name of branch without feature/ prefix. Must follow ABC-123_description format. ABC = JIRA prefix.')
     }
 
     stages {
@@ -50,7 +51,7 @@ pipeline {
             
             steps {
                 sh """
-                echo Feature ${params.feature_branch}
+                echo Action ${params.action} with ${params.feature_branch}
                 """
             }
         }
