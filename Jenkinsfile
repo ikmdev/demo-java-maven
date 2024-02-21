@@ -46,12 +46,14 @@ pipeline {
                 echo Action ${params.action} with ${params.feature_branch}
                 """
 
-                pomModel = readMavenPom(file: 'pom.xml')
-                pomVersion = pomModel.getVersion()
-                isSnapshot = pomVersion.contains("-SNAPSHOT")
-                releaseVersion = pomVersion.split("-")[0]
+                script {
+                    pomModel = readMavenPom(file: 'pom.xml')
+                    pomVersion = pomModel.getVersion()
+                    isSnapshot = pomVersion.contains("-SNAPSHOT")
+                    releaseVersion = pomVersion.split("-")[0]
 
-                feature_name = feature_branch.replaceAll("/s", "_")
+                    feature_name = feature_branch.replaceAll("/s", "_")
+                }
             }
         }
 
