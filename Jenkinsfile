@@ -1,3 +1,4 @@
+#!groovy
 @Library("titan-library") _
 
 pipeline {
@@ -44,6 +45,13 @@ pipeline {
                 printenv
                 echo Action ${params.action} with ${params.feature_branch}
                 """
+
+                pomModel = readMavenPom(file: 'pom.xml')
+                pomVersion = pomModel.getVersion()
+                isSnapshot = pomVersion.contains("-SNAPSHOT")
+                releaseVersion = pomVersion.split("-")[0]
+
+                feature_name = feature_branch.replaceAll("/s", "_")
             }
         }
 
@@ -55,7 +63,11 @@ pipeline {
             
             steps {
                 sh """
-                echo Start Branch ${params.feature_branch}
+                git pull -p
+                git checkout -b feature/${feature_name}
+                mvn versions:set -DnewVersion=${releaseVersion}-${feature_name}-SNAPSHOT -DgenerateBackupPoms=false
+                git commit -am "Update feature version to ${releaseVersion}-${feature_name}-SNAPSHOT"
+                git push -u origin feature/${feature_name}
                 """
             }
         }
