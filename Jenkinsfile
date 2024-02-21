@@ -61,16 +61,19 @@ pipeline {
             when {
                 branch 'main'
                 expression { return params.action == 'start' }
+                expression { return params.feature_branch }
             }
             
             steps {
-                sh """
-                git pull -p
-                git checkout -b feature/${feature_name}
-                mvn versions:set -DnewVersion=${releaseVersion}-${feature_name}-SNAPSHOT -DgenerateBackupPoms=false
-                git commit -am "Update feature version to ${releaseVersion}-${feature_name}-SNAPSHOT"
-                git push -u origin feature/${feature_name}
-                """
+                withCredentials([gitUsernamePassword(credentialsId: GITLAB_CREDS_ID, gitToolName: 'git')]) {
+                    sh """
+                    git pull -p
+                    git checkout -b feature/${feature_name}
+                    mvn versions:set -DnewVersion=${releaseVersion}-${feature_name}-SNAPSHOT -DgenerateBackupPoms=false
+                    git commit -am "Update feature version to ${releaseVersion}-${feature_name}-SNAPSHOT"
+                    git push -u origin feature/${feature_name}
+                    """
+                }
             }
         }
 
