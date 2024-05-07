@@ -15,7 +15,4 @@ jobs:
               uses: actions/checkout@v4
             - name: List files
               run: |
-                ls ${{github.workspace}}
-
-
-# This is to test a push for c2 instance
+                ls ${{github.workspace}
