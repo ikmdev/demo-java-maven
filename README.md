@@ -1,6 +1,6 @@
 # Example Java-Maven Project
 
-Test Repo update
+Contribution from Jason Taylor
 
 ## Getting started
 
