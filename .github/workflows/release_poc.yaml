@@ -1,0 +1,33 @@
+name: Release Pipeline
+
+run-name: Releasing ${{ github.event.repository.name }}
+
+on:
+    workflow_dispatch
+
+jobs:
+    initialization:
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main' || github.ref_name == 'refs/heads/master'
+        outputs:
+            POM_VERSION: ${{steps.getVersion.outputs.POM_VERSION}}
+        steps:
+            - name: Get Current Version
+              run: echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+            - name: Verify Is SNAPSHOT Version
+              if: ${{ !contains(env.POM_VERSION, '-SNAPSHOT')}}
+              run: | 
+                echo "ERROR: Version is set to incompatible version ${{env.POM_VERSION}}. Only SNAPSHOT development versions can be converted to a release version."
+                exit 1
+            - name: Get Release Version
+              run: |
+                echo "RELEASE_VERSION=${env.POM_VERSION##-}" >> $GITHUB_ENV
+                echo "Release version ${{env.RELEASE_VERSION}}"
+
+            
+              
+
+
+
+
+
