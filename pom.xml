@@ -14,6 +14,11 @@
 
     <inceptionYear>2023</inceptionYear>
 
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -31,6 +36,25 @@
         </developer>
     </developers>
 
+    <dependencyManagement>
+		<dependencies>
+				<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.13.1</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
+	<dependencies>
+		    <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+	</dependencies>
+
     <distributionManagement>
         <repository>
             <id>github</id>
@@ -38,10 +62,77 @@
             <url>https://maven.pkg.github.com/ikmdev/demo-java-maven</url>
         </repository>
     </distributionManagement>
-
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-
+    
+    <profiles>
+        <profile>
+            <id>codeQuality</id>
+            <build>
+                <plugins>
+ 
+				 <plugin>
+				            <groupId>org.jacoco</groupId>
+				            <artifactId>jacoco-maven-plugin</artifactId>
+				            <executions>
+								<execution>
+                                	<id>check</id>
+                                	<goals>
+                                    	<goal>check</goal>
+                                	</goals>
+                                	
+                                	<configuration>
+                                    	<dataFile>${project.build.directory}/jacoco/jacoco-ut.exec</dataFile>
+                                    	<haltOnFailure>true</haltOnFailure>
+                                    	<rules>
+	                                        <!-- All classes must have 80% line and branch coverage . Note
+	                                            we use 2 d.p so that we get can any check failure messages reported to 2
+	                                            d.p -->
+	                                        <rule>
+	                                            <element>CLASS</element>
+	                                            <limits>
+	                                                <limit>
+	                                                    <counter>LINE</counter>
+	                                                    <value>COVEREDRATIO</value>
+	                                                    <minimum>0.85</minimum>
+	                                                </limit>
+	                                                <limit>
+	                                                    <counter>BRANCH</counter>
+	                                                    <value>COVEREDRATIO</value>
+	                                                    <minimum>0.85</minimum>
+	                                                </limit>
+	                                            </limits>
+	                                            <includes>
+	                                                <include>gov.irs.irsm.*</include>
+	                                                <include>gov.irs.irps.*</include>
+	                                            </includes>
+	                                        </rule>
+	                                    </rules>
+    	                            </configuration>
+        	                    </execution>								
+								
+				                <execution>
+				                    <goals>
+				                        <goal>prepare-agent</goal>
+				                    </goals>
+				                </execution>
+				                <!-- attached to Maven test phase -->
+				                <execution>
+				                    <id>report</id>
+				                    <phase>test</phase>
+				                    <goals>
+				                        <goal>report</goal>
+				                    </goals>
+				                </execution>
+				            </executions>
+				    </plugin>
+				        
+	                <plugin>
+	                    <artifactId>maven-surefire-plugin</artifactId>
+	                    <version>2.19.1</version>
+	                </plugin>
+                                    
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
 </project>
