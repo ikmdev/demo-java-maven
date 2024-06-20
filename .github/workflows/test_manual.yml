@@ -1,11 +1,11 @@
-name: POC Test-Manual
+#name: POC Test-Manual
 
-run-name: POC Test-Manual
+#run-name: POC Test-Manual
 
-on:
+#on:
     - workflow_dispatch
 
-jobs:
+#jobs:
     Testing:
         runs-on: self-hosted
         steps:

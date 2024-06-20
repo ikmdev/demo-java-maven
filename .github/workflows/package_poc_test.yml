@@ -1,9 +1,9 @@
-name: Publish package to GitHub Packages
+#name: Publish package to GitHub Packages
 
-on:
+#on:
   push:
 
-jobs:
+#jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:

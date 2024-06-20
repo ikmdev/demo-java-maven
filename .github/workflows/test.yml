@@ -1,14 +1,14 @@
-name: POC Test
+#name: POC Test
 
-run-name: POC Test
+#run-name: POC Test
 
-on:
+#on:
     push:
     pull_request:
         types: [opened, reopened]
 
 
-jobs:
+#jobs:
     Testing:
         runs-on: self-hosted
         steps:

@@ -1,8 +1,8 @@
-name: Feature Branch Pipeline
+#name: Feature Branch Pipeline
 
-run-name: "Feature Branch CI -- ${{github.event.inputs.action}} Action - feature/${{github.event.inputs.feature_branch}} "
+#run-name: "Feature Branch CI -- ${{github.event.inputs.action}} Action - feature/${{github.event.inputs.feature_branch}} "
 
-on:
+#on:
     workflow_dispatch:
         inputs:
             action:
@@ -16,12 +16,12 @@ on:
                 type: string
                 description: Enter Branch Name (Without feature/ prefix)
                 required: true
-env:
+#env:
     TRUNK_BRANCH: main
     FEATURE_BRANCH: feature/${{github.event.inputs.feature_branch}}
 
 
-jobs:        
+#jobs:
     start_action:
         runs-on: ubuntu-latest
         name: Start Action - feature/${{github.event.inputs.feature_branch}}

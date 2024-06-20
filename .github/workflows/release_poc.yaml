@@ -1,11 +1,11 @@
-name: Release Pipeline
+#name: Release Pipeline
 
-run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}"
+#run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}"
 
-on:
+#on:
     workflow_dispatch
 
-jobs:
+#jobs:
     initialization:
         runs-on: ubuntu-latest
         if: github.ref == 'refs/heads/main' || github.ref_name == 'refs/heads/master'

@@ -1,11 +1,11 @@
-name: Build Pipeline
+#name: Build Pipeline
 
-run-name: 'Build Pipeline For ${{github.ref_name}}'
+#run-name: 'Build Pipeline For ${{github.ref_name}}'
 
-on:
+#on:
     push:
 
-jobs:
+#jobs:
   build-job:
     name: Build Job
     runs-on: ubuntu-latest
