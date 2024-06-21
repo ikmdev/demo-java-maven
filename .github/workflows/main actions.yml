@@ -4,13 +4,14 @@ run-name: 'Build Pipeline For ${{github.ref_name}}'
 
 on:
   push:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Code Repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 21
@@ -24,7 +25,8 @@ jobs:
         run: |
           echo 'Running in main branch'
           mvn clean install
-      - name: Maven Build -- Feature Branch
+
+      - name: Build with Maven -- Feature Branch
         if: github.ref != 'refs/heads/main'
         run: |
           echo 'Running in ${{github.ref_name}} branch'
@@ -49,13 +51,17 @@ jobs:
 
       - name: Get Version
         run: echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
       - name: Print Current Version
         run: echo "Current Version Is - ${{env.POM_VERSION}}"
+
       - name: Check If Release Version
         if: ${{ !contains(env.POM_VERSION, '-SNAPSHOT') }}
         run: echo "REPOSITORY_ID=maven-release" >> $GITHUB_ENV
+
       - name: Deploy To Nexus
         run: echo "Deploy artifact to nexus - ${{env.REPOSITORY_ID}}"
+
       - name: Deploy To OSSRH
         if: ${{ env.REPOSITORY_ID == 'maven-release'}}
         run: echo "Deploy artifacts to OSSRH"
