@@ -1,22 +1,37 @@
-name: Release Pipeline Build
+name: Release Pipeline
 
 run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}"
 
 # Trigger workflow manually
 on:
   workflow_dispatch:
+    inputs:
+      release_message:
+        type: string
+        description: "(Optional) Enter Release Message"
+
+# Define environment parameters
+env:
+  BRANCH_NAME: ${{github.ref_name}}
+  TRUNK_BRANCH_NAME: main
+  RELEASE_MESSAGE: ${{github.event.input.release_message}}
 
 # Define jobs within the workflow
 jobs:
   initialization:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref_name == 'refs/heads/master'
+    name: Initialization
     outputs:
-      SNAPSHOT_VERSION: ${{steps.newSnapshotVersion.outputs.SnapshotVersion}}
-      RELEASE_VERSION: ${{steps.splitVersion.outputs._0}}
-    env:
-      SNAPSHOTVERSION: ""
+      NEXT_SNAPSHOT_VERSION: ${{steps.nextSnapshotVersion.outputs.SnapshotVersion}}
+      RELEASE_VERSION: ${{steps.splitCurrentVersion.outputs._0}}
+
     steps:
+      - name: Verify Branch
+        if: env.BRANCH_NAME != env.TRUNK_BRANCH_NAME
+        run: |
+          echo "ERROR: Attempting to release from branch ${{env.BRANCH_NAME}}. Release from ${{env.TRUNK_BRANCH_NAME}} branch only"
+          exit 1
+
       - name: Checkout Code Repository
         uses: actions/checkout@v4
 
@@ -41,34 +56,36 @@ jobs:
 
       - name: Split version code
         uses: xom9ikk/split@v1
-        id: splitVersion
+        id: splitCurrentVersion
         with:
           string: ${{env.POM_VERSION}}
           separator: -SNAPSHOT
           limit: -1
 
-      - name: Split version code - Minor
+      - name: Split version code - Separate By .
         uses: xom9ikk/split@v1
         id: splitVersionMinor
         with:
-          string: ${{steps.splitVersion.outputs._0}}
+          string: ${{steps.splitCurrentVersion.outputs._0}}
           separator: .
           limit: -1
 
       - name: Increment Snapshot Version
-        id: newSnapshotVersion
+        id: nextSnapshotVersion
         run: |
           echo "SnapshotVersion=${{steps.splitVersionMinor.outputs._0}}.$((${{steps.splitVersionMinor.outputs._1}} + 1)).${{steps.splitVersionMinor.outputs._2}}-SNAPSHOT" >> $GITHUB_OUTPUT
 
-      - name: Print Versions
+      - name: Print Information
         run: |
-          echo " Snapshot Version -- ${{steps.newSnapshotVersion.outputs.SnapshotVersion}}"
-          echo " Release Version -- ${{steps.splitVersion.outputs._0}}"
+          echo "Branch Name -- #{{env.BRANCH_NAME}}"
+          echo "Release Version -- ${{steps.splitCurrentVersion.outputs._0}}"
+          echo "Snapshot Version -- ${{steps.nextSnapshotVersion.outputs.SnapshotVersion}}"
 
   #Setting versioning for build and tags
   set_build_and_tag_release:
     runs-on: ubuntu-latest
     needs: initialization
+    name: Set, Build & Tag Release Version
     permissions:
       contents: write
 
@@ -83,10 +100,15 @@ jobs:
           java-version: '21'
 
       - name: Set Release Version
-        run: mvn -B versions:set -DnewVersion=${{needs.initialization.outputs.RELEASE_VERSION}} -DgenerateBackupPoms=false
+        run: |
+          mvn -B versions:set \
+          -DnewVersion=${{needs.initialization.outputs.RELEASE_VERSION}} \
+          -DgenerateBackupPoms=false
 
       - name: Build Release Version
-        run: mvn -version mvn clean install
+        run: |
+          mvn -version
+          mvn clean install
 
       - name: Create tag
         uses: actions/github-script@v5
@@ -102,6 +124,7 @@ jobs:
   #Setting next development version
   set_next_dev:
     runs-on: ubuntu-latest
+    name: Set Next Development Version
     needs:
       - initialization
       - set_build_and_tag_release
@@ -120,13 +143,16 @@ jobs:
           java-version: '21'
 
       - name: Set Dev Version
-        run: mvn -B versions:set -DnewVersion=${{needs.initialization.outputs.SNAPSHOT_VERSION}} -DgenerateBackupPoms=false
+        run: |
+          mvn -B versions:set \
+          -DnewVersion=${{needs.initialization.outputs.NEXT_SNAPSHOT_VERSION}} \
+          -DgenerateBackupPoms=false
 
       # The GitHub Actions workflow will automatically use the existing  global user.name configuration set on the developer's machine for any Git operations within the workflow. No additional configuration is needed in the workflow YAML file.
       - name: Commit & Push
         run: |
           git add .
-          git commit -m 'Set next dev version to ${{needs.initialization.outputs.SNAPSHOT_VERSION}}'
+          git commit -m 'Set next dev version to ${{needs.initialization.outputs.NEXT_SNAPSHOT_VERSION}}'
           git push origin HEAD:main
           git push --tags origin
 
@@ -137,7 +163,6 @@ jobs:
 
     needs:
       - initialization
-      - set_build_and_tag_release
       - set_next_dev
 
     runs-on: ubuntu-latest
@@ -145,6 +170,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@main
+
+      - name: Modify Release Message
+        if: env.RELEASE_MESSAGE == ''
+        run: echo "RELEASE_MESSAGE=Release ${{needs.initialization.outputs.RELEASE_VERSION}}" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
@@ -155,8 +184,6 @@ jobs:
           tag_name: ${{needs.initialization.outputs.RELEASE_VERSION}}
           release_name: Release ${{needs.initialization.outputs.RELEASE_VERSION}}
           body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+            ${{env.RELEASE_MESSAGE}}
           draft: false
           prerelease: false
