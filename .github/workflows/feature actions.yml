@@ -1,0 +1,159 @@
+name: Feature Branch Pipeline
+
+run-name: "Feature Branch CI -- ${{github.event.inputs.action}} Action - feature/${{github.event.inputs.feature_branch}} "
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        description: Action
+        options:
+          - Start
+          - Finish
+        required: true
+
+      feature_branch:
+        type: string
+        description: Enter Branch Name (Without feature/ prefix)
+        required: true
+env:
+  TRUNK_BRANCH: main
+  FEATURE_BRANCH: feature/${{github.event.inputs.feature_branch}}
+
+# Define jobs within the workflow
+jobs:
+  start_action:
+    runs-on: ubuntu-latest
+    name: Start Action - feature/${{github.event.inputs.feature_branch}}
+    if: github.event.inputs.action == 'Start' && github.event.inputs.feature_branch != ''
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Get Current Version
+        run: |
+          echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Print Version
+        run: echo ${{env.POM_VERSION}}
+
+      - name: Split version code
+        uses: xom9ikk/split@v1
+        id: splitVersion
+        with:
+          string: ${{env.POM_VERSION}}
+          separator: -SNAPSHOT
+          limit: -1
+
+      - name: Set New Unique Version
+        run: echo "uniqueVersion=${{steps.splitVersion.outputs._0}}-${{github.event.inputs.feature_branch}}-SNAPSHOT" >> $GITHUB_ENV
+
+      # The GitHub Actions workflow will automatically use the existing  global user.name configuration set on the developer's machine for any Git operations within the workflow. No additional configuration is needed in the workflow YAML file.
+      - name: Commit & Push
+        run: |
+          git pull -p
+          git checkout -b $FEATURE_BRANCH
+          mvn versions:set -DnewVersion=${{env.uniqueVersion}} -DgenerateBackupPoms=false
+          git commit -am "Draft: Update feature version to ${{env.uniqueVersion}}"
+          git push -u origin $FEATURE_BRANCH
+
+      - name: Run the Action
+        uses: devops-infra/action-pull-request@v0.5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          source_branch: ${{env.FEATURE_BRANCH}}
+          target_branch: ${{env.TRUNK_BRANCH}}
+          title: Draft - ${{env.FEATURE_BRANCH}}
+          body: "**Currently work in progress - ${{env.FEATURE_BRANCH}}**"
+          draft: true
+
+  finish_action:
+    runs-on: ubuntu-latest
+    name: Finish Action - feature/${{github.event.inputs.feature_branch}}
+    if: github.event.inputs.action == 'Finish' && github.event.inputs.feature_branch != ''
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Get Current Version
+        run: |
+          echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Print Version
+        run: echo ${{env.POM_VERSION}}
+
+      - name: Split version code
+        uses: xom9ikk/split@v1
+        id: splitVersion
+        with:
+          string: ${{env.POM_VERSION}}
+          separator: "-"
+          limit: -1
+
+      - name: Set SNAPSHOT Version
+        run: echo "snapshotVersion=${{steps.splitVersion.outputs._0}}-SNAPSHOT" >> $GITHUB_ENV
+
+      # The GitHub Actions workflow will automatically use the existing  global user.name configuration set on the developer's machine for any Git operations within the workflow. No additional configuration is needed in the workflow YAML file.
+      - name: Commit & Push
+        run: |
+          git checkout $TRUNK_BRANCH
+          git pull -p
+          git checkout $FEATURE_BRANCH
+          mvn versions:set -DnewVersion=$snapshotVersion -DgenerateBackupPoms=false
+          git commit -am "Branch Ready For Review - Reverted back to original snapshot version $snapshotVersion"
+          git push origin $FEATURE_BRANCH
+
+  update_pull_request:
+    needs: finish_action
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Get Pull Request
+        id: getPRList
+        uses: ${{ github.repository_owner }}/get-pr-number-based-off-branch-name@main
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          repository: ${{github.repository}}
+          branch_name: ${{env.FEATURE_BRANCH}}
+
+      - name: Update PR
+        if: steps.getPRList.outputs.pr_exists == 'true'
+        run: |
+          curl -L \
+           -X PATCH \
+           -H "Accept: application/vnd.github+json" \
+           -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
+           -H "X-GitHub-Api-Version: 2022-11-28" \
+           ${{steps.getPRList.outputs.pr_url}} \
+           -d '{"title":"Ready For Review - ${{env.FEATURE_BRANCH}}","body":"Ready For Review - ${{env.FEATURE_BRANCH}}","state":"open", "draft": "false"}'
+
+      - name: Set PR To Ready
+        if: steps.getPRList.outputs.pr_exists == 'true'
+        run: gh pr ready ${{steps.getPRList.outputs.pr_html_url}}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
