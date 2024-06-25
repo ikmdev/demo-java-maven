@@ -135,7 +135,7 @@ jobs:
     steps:
       - name: Get Pull Request
         id: getPRList
-        uses: ${{ github.repository_owner }}/get-pr-number-based-off-branch-name@main
+        uses: OmOmofonmwan/get-pr-number-based-off-branch-name@main
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           repository: ${{github.repository}}
