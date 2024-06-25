@@ -4,6 +4,20 @@ run-name: 'Build Pipeline For ${{github.ref_name}}'
 
 on:
   push:
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        description: Action
+        options:
+          - Start
+          - Finish
+        required: true
+
+      feature_branch:
+        type: string
+        description: Enter Branch Name (Without feature/ prefix)
+        required: true
 
 jobs:
   build:
