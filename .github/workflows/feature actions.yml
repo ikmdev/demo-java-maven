@@ -21,8 +21,6 @@ on:
 env:
   TRUNK_BRANCH: main
   FEATURE_BRANCH: feature/${{github.event.inputs.feature_branch}}
-  GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
-  GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
 
 # Define jobs within the workflow
 jobs:
@@ -65,7 +63,8 @@ jobs:
       # The GitHub Actions workflow will automatically use the existing  global user.name configuration set on the developer's machine for any Git operations within the workflow. No additional configuration is needed in the workflow YAML file.
       - name: Commit & Push
         run: |
-          ./set-git-config.sh -u "${{ secrets.GIT_USER_NAME }}" -e "${{ secrets.GIT_USER_EMAIL }}"
+          git config --global user.name "$USER_NAME"
+          git config --global user.email "$USER_EMAIL"
           git pull -p
           git checkout -b $FEATURE_BRANCH
           mvn versions:set -DnewVersion=${{env.uniqueVersion}} -DgenerateBackupPoms=false
@@ -121,7 +120,8 @@ jobs:
       # The GitHub Actions workflow will automatically use the existing  global user.name configuration set on the developer's machine for any Git operations within the workflow. No additional configuration is needed in the workflow YAML file.
       - name: Commit & Push
         run: |
-          ./set-git-config.sh -u "${{ secrets.GIT_USER_NAME }}" -e "${{ secrets.GIT_USER_EMAIL }}"
+          git config --global user.name "$USER_NAME"
+          git config --global user.email "$USER_EMAIL"
           git checkout $TRUNK_BRANCH
           git pull -p
           git checkout $FEATURE_BRANCH
