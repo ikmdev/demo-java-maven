@@ -151,8 +151,8 @@ jobs:
       # The GitHub Actions workflow will automatically use the existing  global user.name configuration set on the developer's machine for any Git operations within the workflow. No additional configuration is needed in the workflow YAML file.
       - name: Commit & Push
         run: |
-          git config --global user.name "$USER_NAME"
-          git config --global user.email "$USER_EMAIL"
+#          git config --global user.name "$USER_NAME"
+#          git config --global user.email "$USER_EMAIL"
           git add .
           git commit -m 'Set next dev version to ${{needs.initialization.outputs.NEXT_SNAPSHOT_VERSION}}'
           git push origin HEAD:main
