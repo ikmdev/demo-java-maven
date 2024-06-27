@@ -148,7 +148,6 @@ jobs:
           -DnewVersion=${{needs.initialization.outputs.NEXT_SNAPSHOT_VERSION}} \
           -DgenerateBackupPoms=false
 
-      # The GitHub Actions workflow will automatically use the existing  global user.name configuration set on the developer's machine for any Git operations within the workflow. No additional configuration is needed in the workflow YAML file.
       - name: Commit & Push
         run: |
           git config user.name "${{ github.actor }}"
