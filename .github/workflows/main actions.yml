@@ -58,9 +58,9 @@ jobs:
         if: ${{ !contains(env.POM_VERSION, '-SNAPSHOT') }}
         run: echo "REPOSITORY_ID=maven-release" >> $GITHUB_ENV
 
-      - name: Deploy To Nexus
-        run: echo "Deploy artifact to nexus - ${{env.REPOSITORY_ID}}"
+#      - name: Deploy To Nexus
+#        run: echo "Deploy artifact to nexus - ${{env.REPOSITORY_ID}}"
 
-      - name: Deploy To OSSRH
-        if: ${{ env.REPOSITORY_ID == 'maven-release'}}
-        run: echo "Deploy artifacts to OSSRH"
+#      - name: Deploy To OSSRH
+#        if: ${{ env.REPOSITORY_ID == 'maven-release'}}
+#        run: echo "Deploy artifacts to OSSRH"
