@@ -12,6 +12,7 @@ on:
         options:
           - Start
           - Finish
+          - Resume
         required: true
 
       feature_branch:
@@ -161,3 +162,58 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
+  resume_action:
+    runs-on: ubuntu-latest
+    name: Resume Action - feature/${{github.event.inputs.feature_branch}}
+    if: github.event.inputs.action == 'Resume' && github.event.inputs.feature_branch != ''
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Get Current Version
+        run: |
+          echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Print Version
+        run: echo ${{env.POM_VERSION}}
+
+      - name: Split version code
+        uses: xom9ikk/split@v1.1
+        id: splitVersion
+        with:
+          string: ${{env.POM_VERSION}}
+          separator: -SNAPSHOT
+          limit: -1
+
+      - name: Revert to Former Unique Version
+        run: echo "revertedUniqueVersion=${{steps.splitVersion.outputs._0}}-${{github.event.inputs.feature_branch}}-SNAPSHOT" >> $GITHUB_ENV
+
+      - name: Commit & Push
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git pull -p
+          git checkout -b $FEATURE_BRANCH
+          mvn versions:set -DnewVersion=${{env.uniqueVersion}} -DgenerateBackupPoms=false
+          git commit -am "Draft: Update feature version to ${{env.uniqueVersion}}"
+          git push -u origin $FEATURE_BRANCH
+
+      - name: Run the Action
+        uses: devops-infra/action-pull-request@v0.5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          source_branch: ${{env.FEATURE_BRANCH}}
+          target_branch: ${{env.TRUNK_BRANCH}}
+          title: Draft - ${{env.FEATURE_BRANCH}}
+          body: "**Currently work in progress - ${{env.FEATURE_BRANCH}}**"
+          draft: true
