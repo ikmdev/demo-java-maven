@@ -202,11 +202,14 @@ jobs:
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git config --get remote.origin.fetch
+          git checkout $TRUNK_BRANCH
           git pull -p
-          git checkout -b $FEATURE_BRANCH
+          git checkout $FEATURE_BRANCH
           mvn versions:set -DnewVersion=${{env.uniqueVersion}} -DgenerateBackupPoms=false
           git commit -am "Draft: Update feature version to ${{env.uniqueVersion}}"
-          git push -u origin $FEATURE_BRANCH
+          git pull --all
+          git push origin $FEATURE_BRANCH
 
       - name: Run the Action
         uses: devops-infra/action-pull-request@v0.5.5
