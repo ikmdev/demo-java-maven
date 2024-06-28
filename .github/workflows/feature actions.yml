@@ -195,8 +195,8 @@ jobs:
           separator: -SNAPSHOT
           limit: -1
 
-      - name: Revert to Former Unique Version
-        run: echo "revertedUniqueVersion=${{steps.splitVersion.outputs._0}}-${{github.event.inputs.feature_branch}}-SNAPSHOT" >> $GITHUB_ENV
+      - name: Revert to Feature Version
+        run: echo "revertedFeatureVersion=${{steps.splitVersion.outputs._0}}-${{github.event.inputs.feature_branch}}-SNAPSHOT" >> $GITHUB_ENV
 
       - name: Commit & Push
         run: |
@@ -220,3 +220,36 @@ jobs:
           title: Draft - ${{env.FEATURE_BRANCH}}
           body: "**Currently work in progress - ${{env.FEATURE_BRANCH}}**"
           draft: true
+
+  update_draft_pull_request:
+    needs: resume_action
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Get Pull Request
+        id: getPRList
+        uses: OmOmofonmwan/get-pr-number-based-off-branch-name@main
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          repository: ${{github.repository}}
+          branch_name: ${{env.FEATURE_BRANCH}}
+
+      - name: Update PR
+        if: steps.getPRList.outputs.pr_exists == 'true'
+        run: |
+          curl -L \
+           -X PATCH \
+           -H "Accept: application/vnd.github+json" \
+           -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
+           -H "X-GitHub-Api-Version: 2022-11-28" \
+           ${{steps.getPRList.outputs.pr_url}} \
+           -d '{"title":"Draft - ${{env.FEATURE_BRANCH}}","body":"Draft - ${{env.FEATURE_BRANCH}}","state":"open", "draft": "true"}'
+
+      - name: Set PR To Draft
+        if: steps.getPRList.outputs.pr_exists == 'true'
+        run: gh pr draft ${{steps.getPRList.outputs.pr_html_url}}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
