@@ -250,6 +250,6 @@ jobs:
 
       - name: Set PR To Draft
         if: steps.getPRList.outputs.pr_exists == 'true'
-        run: gh pr draft ${{steps.getPRList.outputs.pr_html_url}}
+        run: gh pr edit --draft ${{steps.getPRList.outputs.pr_html_url}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
