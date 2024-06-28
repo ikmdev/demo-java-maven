@@ -251,9 +251,7 @@ jobs:
       - name: Set PR To Draft
         if: steps.getPRList.outputs.pr_exists == 'true'
         run: |
-          gh extension install kyanny/gh-pr-draft
-          gh pr checkout 1234
-          gh pr-draft
+          kyanny/gh-pr-draft ${{steps.getPRList.outputs.pr_html_url}}
 #          gh pr ready --undo ${{steps.getPRList.outputs.pr_html_url}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
