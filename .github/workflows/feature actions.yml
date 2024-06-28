@@ -250,7 +250,7 @@ jobs:
 
       - name: Set PR To Draft
         if: steps.getPRList.outputs.pr_exists == 'true'
-        run: |
-          curl -X PATCH -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" https://api.github.com/repos/${{github.repository}}/pulls/{{steps.getPRList.outputs.pr_html_url}} -d '{"draft": true}'
+        run: gh alias set unready "gh pr ready --undo"
+#          ${{steps.getPRList.outputs.pr_html_url}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
