@@ -195,8 +195,8 @@ jobs:
           separator: -SNAPSHOT
           limit: -1
 
-      - name: Revert to Feature Version
-        run: echo "revertedFeatureVersion=${{steps.splitVersion.outputs._0}}-${{github.event.inputs.feature_branch}}-SNAPSHOT" >> $GITHUB_ENV
+      - name: Revert to Unique Version
+        run: echo "uniqueVersion=${{steps.splitVersion.outputs._0}}-${{github.event.inputs.feature_branch}}-SNAPSHOT" >> $GITHUB_ENV
 
       - name: Commit & Push
         run: |
