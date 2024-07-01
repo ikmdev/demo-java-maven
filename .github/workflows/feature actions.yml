@@ -1,4 +1,4 @@
-name: Feature Branch Pipeline
+name: Feature Branch Workflow
 
 run-name: "Feature Branch CI -- ${{github.event.inputs.action}} Action - feature/${{github.event.inputs.feature_branch}} "
 
@@ -19,21 +19,48 @@ on:
         type: string
         description: Enter Branch Name (Without feature/ prefix)
         required: true
+
 env:
   TRUNK_BRANCH: main
   FEATURE_BRANCH: feature/${{github.event.inputs.feature_branch}}
 
 # Define jobs within the workflow
 jobs:
+  check_if_pr_exist:
+    runs-on: ubuntu-latest
+    name: Check If PR Exist For Branch
+    if: github.event.inputs.feature_branch != ''
+    outputs:
+      prExists: ${{steps.getPRList.outputs.pr_exists}}
+      prURL: ${{steps.getPRList.outputs.pr_url}}
+      prNumber: ${{steps.getPRList.outputs.pr_number}}
+      prHTMLURL: ${{steps.getPRList.outputs.pr_html_url}}
+    steps:
+      - name: Get Pull Request
+        id: getPRList
+        uses: OmOmofonmwan/get-pr-number-based-off-branch-name@main
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          repository: ikmdev/${{github.event.repository.name}}
+          branch_name: ${{env.FEATURE_BRANCH}}
+
   start_action:
     runs-on: ubuntu-latest
-    name: Start Action - feature/${{github.event.inputs.feature_branch}}
-    if: github.event.inputs.action == 'Start' && github.event.inputs.feature_branch != ''
+    name: Start Action
+    needs: check_if_pr_exist
+    if: github.event.inputs.action == 'Start'
+
     permissions:
       contents: write
       pull-requests: write
 
     steps:
+      - name: If PR Exist
+        if: needs.check_if_pr_exist.outputs.prExists == 'true'
+        run: |
+          echo "ERROR: Pull Request Already Exists For ${{env.FEATURE_BRANCH}}"
+          exit 1
+
       - name: Checkout Code Repository
         uses: actions/checkout@v4
 
@@ -48,7 +75,7 @@ jobs:
           echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
       - name: Print Version
-        run: echo ${{env.POM_VERSION}}
+        run: echo "Current Version - ${{env.POM_VERSION}}"
 
       - name: Split version code
         uses: xom9ikk/split@v1.1
@@ -70,27 +97,35 @@ jobs:
           git checkout -b $FEATURE_BRANCH
           mvn versions:set -DnewVersion=${{env.uniqueVersion}} -DgenerateBackupPoms=false
           git commit -am "Draft: Update feature version to ${{env.uniqueVersion}}"
+          git pull origin main
           git push -u origin $FEATURE_BRANCH
 
-      - name: Run the Action
-        uses: devops-infra/action-pull-request@v0.5.5
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: ${{env.FEATURE_BRANCH}}
-          target_branch: ${{env.TRUNK_BRANCH}}
-          title: Draft - ${{env.FEATURE_BRANCH}}
-          body: "**Currently work in progress - ${{env.FEATURE_BRANCH}}**"
-          draft: true
+      - name: Create PR
+        run: |
+          curl -L \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+             https://api.github.com/repos/ikmdev/${{github.event.repository.name}}/pulls \
+          -d '{"title":"Draft - ${{env.FEATURE_BRANCH}}","body":"Currently In Progress: ${{env.FEATURE_BRANCH}}","head":"${{github.repository_owner}}:${{env.FEATURE_BRANCH}}","base":"${{env.TRUNK_BRANCH}}", "maintainer_can_modify": false, "draft": true}'
 
   finish_action:
     runs-on: ubuntu-latest
-    name: Finish Action - feature/${{github.event.inputs.feature_branch}}
-    if: github.event.inputs.action == 'Finish' && github.event.inputs.feature_branch != ''
+    name: Finish Action
+    if: github.event.inputs.action == 'Finish'
+    needs: check_if_pr_exist
     permissions:
       contents: write
       pull-requests: write
 
     steps:
+      - name: If PR Does Not Exist
+        if: needs.check_if_pr_exist.outputs.prExists == 'false'
+        run: |
+          echo "ERROR: Pull Request Does Not Exist For ${{env.FEATURE_BRANCH}}"
+          exit 1
+
       - name: Checkout Code Repository
         uses: actions/checkout@v4
 
@@ -105,7 +140,7 @@ jobs:
           echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
       - name: Print Version
-        run: echo ${{env.POM_VERSION}}
+        run: echo "Current Version - ${{env.POM_VERSION}}"
 
       - name: Split version code
         uses: xom9ikk/split@v1.1
@@ -129,48 +164,38 @@ jobs:
           git commit -am "Branch Ready For Review - Reverted back to original snapshot version $snapshotVersion"
           git push origin $FEATURE_BRANCH
 
-  update_pull_request:
-    needs: finish_action
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-
-    steps:
-      - name: Get Pull Request
-        id: getPRList
-        uses: OmOmofonmwan/get-pr-number-based-off-branch-name@main
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          repository: ${{github.repository}}
-          branch_name: ${{env.FEATURE_BRANCH}}
-
-      - name: Update PR
-        if: steps.getPRList.outputs.pr_exists == 'true'
+      - name: Update PR To Ready For Review
         run: |
           curl -L \
            -X PATCH \
            -H "Accept: application/vnd.github+json" \
            -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
            -H "X-GitHub-Api-Version: 2022-11-28" \
-           ${{steps.getPRList.outputs.pr_url}} \
+           ${{needs.check_if_pr_exist.outputs.prURL}} \
            -d '{"title":"Ready For Review - ${{env.FEATURE_BRANCH}}","body":"Ready For Review - ${{env.FEATURE_BRANCH}}","state":"open", "draft": "false"}'
 
       - name: Set PR To Ready
-        if: steps.getPRList.outputs.pr_exists == 'true'
-        run: gh pr ready ${{steps.getPRList.outputs.pr_html_url}}
+        if: needs.check_if_pr_exist.outputs.prExists == 'true'
+        run: gh pr ready ${{needs.check_if_pr_exist.outputs.prHTMLURL}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
+          
   resume_action:
     runs-on: ubuntu-latest
-    name: Resume Action - feature/${{github.event.inputs.feature_branch}}
-    if: github.event.inputs.action == 'Resume' && github.event.inputs.feature_branch != ''
+    name: Resume Action
+    if: github.event.inputs.action == 'Resume'
+    needs: check_if_pr-exist
     permissions:
       contents: write
       pull-requests: write
 
     steps:
+      - name: If PR Does Not Exist
+        if: needs.check_if_pr_exist.outputs.prExists == 'false'
+        run: |
+          echo "ERROR: Pull Request Does Not Exist For ${{env.FEATURE_BRANCH}}"
+          exit 1
+
       - name: Checkout Code Repository
         uses: actions/checkout@v4
 
@@ -211,47 +236,19 @@ jobs:
           git pull --all
           git push origin $FEATURE_BRANCH
 
-      - name: Run the Action
-        uses: devops-infra/action-pull-request@v0.5.5
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: ${{env.FEATURE_BRANCH}}
-          target_branch: ${{env.TRUNK_BRANCH}}
-          title: Draft - ${{env.FEATURE_BRANCH}}
-          body: "**Currently work in progress - ${{env.FEATURE_BRANCH}}**"
-          draft: true
-
-  update_draft_pull_request:
-    needs: resume_action
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-
-    steps:
-      - name: Get Pull Request
-        id: getPRList
-        uses: OmOmofonmwan/get-pr-number-based-off-branch-name@main
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          repository: ${{github.repository}}
-          branch_name: ${{env.FEATURE_BRANCH}}
-
-      - name: Update PR
-        if: steps.getPRList.outputs.pr_exists == 'true'
+      - name: Update PR To Draft
         run: |
           curl -L \
            -X PATCH \
            -H "Accept: application/vnd.github+json" \
            -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
            -H "X-GitHub-Api-Version: 2022-11-28" \
-           ${{steps.getPRList.outputs.pr_url}} \
-           -d '{"title":"Draft - ${{env.FEATURE_BRANCH}}","body":"Draft - ${{env.FEATURE_BRANCH}}","state":"open", "draft": "true"}'
+           ${{needs.check_if_pr_exist.outputs.prURL}} \
+           -d '{"title":"Draft - ${{env.FEATURE_BRANCH}}","body":"Currently Work In Progress - ${{env.FEATURE_BRANCH}}","state":"open", "maintainer_can_modify": false, "draft": "true"}'
 
       - name: Set PR To Draft
-        if: steps.getPRList.outputs.pr_exists == 'true'
         run: |
           gh extension install kyanny/gh-pr-draft
-          gh pr ready --undo ${{steps.getPRList.outputs.pr_html_url}}
+          gh pr ready --undo ${{needs.check_if_pr_exist.outputs.prHTMLURL}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
