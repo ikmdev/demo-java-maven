@@ -40,7 +40,7 @@ jobs:
         id: getPRList
         uses: OmOmofonmwan/get-pr-number-based-off-branch-name@main
         with:
-          github_token: ${{secrets.TOKEN_1}}
+          github_token: ${{secrets.GITHUB_TOKEN}}
           repository: ikmdev/${{github.event.repository.name}}
           branch_name: ${{env.FEATURE_BRANCH}}
 
@@ -105,7 +105,7 @@ jobs:
           curl -L \
               -X POST \
               -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{secrets.TOKEN_1}}" \
+              -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
              https://api.github.com/repos/ikmdev/${{github.event.repository.name}}/pulls \
           -d '{"title":"Draft - ${{env.FEATURE_BRANCH}}","body":"Currently In Progress: ${{env.FEATURE_BRANCH}}","head":"${{github.repository_owner}}:${{env.FEATURE_BRANCH}}","base":"${{env.TRUNK_BRANCH}}", "maintainer_can_modify": false, "draft": true}'
@@ -169,7 +169,7 @@ jobs:
           curl -L \
            -X PATCH \
            -H "Accept: application/vnd.github+json" \
-           -H "Authorization: Bearer ${{secrets.TOKEN_1}}" \
+           -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
            -H "X-GitHub-Api-Version: 2022-11-28" \
            ${{needs.check_if_pr_exist.outputs.prURL}} \
            -d '{"title":"Ready For Review - ${{env.FEATURE_BRANCH}}","body":"Ready For Review - ${{env.FEATURE_BRANCH}}","state":"open", "draft": "false"}'
@@ -178,7 +178,7 @@ jobs:
         if: needs.check_if_pr_exist.outputs.prExists == 'true'
         run: gh pr ready ${{needs.check_if_pr_exist.outputs.prHTMLURL}}
         env:
-          GITHUB_TOKEN: ${{secrets.TOKEN_1}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           
   resume_action:
     runs-on: ubuntu-latest
@@ -241,7 +241,7 @@ jobs:
           curl -L \
            -X PATCH \
            -H "Accept: application/vnd.github+json" \
-           -H "Authorization: Bearer ${{secrets.TOKEN_1}}" \
+           -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
            -H "X-GitHub-Api-Version: 2022-11-28" \
            ${{needs.check_if_pr_exist.outputs.prURL}} \
            -d '{"title":"Draft - ${{env.FEATURE_BRANCH}}","body":"Currently Work In Progress - ${{env.FEATURE_BRANCH}}","state":"open", "maintainer_can_modify": false, "draft": "true"}'
@@ -251,4 +251,4 @@ jobs:
           gh extension install kyanny/gh-pr-draft
           gh pr ready --undo ${{needs.check_if_pr_exist.outputs.prHTMLURL}}
         env:
-          GITHUB_TOKEN: ${{secrets.TOKEN_1}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
