@@ -107,7 +107,7 @@ jobs:
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
-              ${{needs.check_if_pr_exist.outputs.prHTMLURL}} \
+              ${{steps.getPRList.outputs.pr_url}} \
               -d '{"title":"Draft - ${{env.FEATURE_BRANCH}}","body":"Currently In Progress: ${{env.FEATURE_BRANCH}}","head":"${{github.repository_owner}}:${{env.FEATURE_BRANCH}}","base":"${{env.TRUNK_BRANCH}}", "maintainer_can_modify": false, "draft": true}'
 
   finish_action:
