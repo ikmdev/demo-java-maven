@@ -34,7 +34,7 @@ jobs:
       prExists: ${{steps.getPRList.outputs.pr_exists}}
       prURL: ${{steps.getPRList.outputs.pr_url}}
       prNumber: ${{steps.getPRList.outputs.pr_number}}
-      prHTMLURL: ${{steps.getPRList.outputs.pr_html_url}}
+      prHTMLURL: ${{steps.getPRList.outputs.pr-html_url}}
     steps:
       - name: Get Pull Request
         id: getPRList
@@ -243,7 +243,7 @@ jobs:
            -H "Accept: application/vnd.github+json" \
            -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
            -H "X-GitHub-Api-Version: 2022-11-28" \
-           ${{needs.check_if_pr_exist.outputs.prURL}} \
+           ${{needs.check_if_pr_exist.outputs.prHTMLURL}} \
            -d '{"title":"Draft - ${{env.FEATURE_BRANCH}}","body":"Currently Work In Progress - ${{env.FEATURE_BRANCH}}","state":"open", "maintainer_can_modify": false, "draft": "true"}'
 
       - name: Set PR To Draft
