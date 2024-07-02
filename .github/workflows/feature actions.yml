@@ -184,7 +184,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Resume Action
     if: github.event.inputs.action == 'Resume'
-    needs: check_if_pr-exist
+    needs: check_if_pr_exist
     permissions:
       contents: write
       pull-requests: write
