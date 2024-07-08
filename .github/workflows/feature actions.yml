@@ -91,8 +91,8 @@ jobs:
       # The GitHub Actions workflow will automatically use the existing  global user.name configuration set on the developer's machine for any Git operations within the workflow. No additional configuration is needed in the workflow YAML file.
       - name: Commit & Push
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+          git config user.name "Cloud User"
           git pull -p
           git checkout -b $FEATURE_BRANCH
           mvn versions:set -DnewVersion=${{env.uniqueVersion}} -DgenerateBackupPoms=false
@@ -156,8 +156,8 @@ jobs:
 
       - name: Commit & Push
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+          git config user.name "Cloud User"
           git checkout $TRUNK_BRANCH
           git pull -p
           git checkout $FEATURE_BRANCH
@@ -227,8 +227,8 @@ jobs:
 
       - name: Commit & Push
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+          git config user.name "Cloud User"
           git config --get remote.origin.fetch
           git checkout $TRUNK_BRANCH
           git pull -p

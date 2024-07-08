@@ -15,11 +15,12 @@ env:
   BRANCH_NAME: ${{github.ref_name}}
   TRUNK_BRANCH_NAME: main
   RELEASE_MESSAGE: ${{github.event.inputs.release_message}}
+  MAVEN_SETTING: '/home/ec2-user/maven/.m2/settings.xml'
 
 # Define jobs within the workflow
 jobs:
   initialization:
-#    if: github.repository_owner == 'ikmdev'
+    if: github.repository_owner == 'ikmdev'
     runs-on: ubuntu-latest
     name: Initialization
     outputs:
@@ -101,6 +102,7 @@ jobs:
       - name: Set Release Version
         run: |
           mvn -B versions:set \
+          -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{needs.initialization.outputs.RELEASE_VERSION}} \
           -DgenerateBackupPoms=false
 
@@ -111,8 +113,8 @@ jobs:
 
       - name: Create tag
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+          git config user.name "Cloud User"
           git add .
           git commit -m 'Release ${{needs.initialization.outputs.RELEASE_VERSION}}'
           git tag -a ${{needs.initialization.outputs.RELEASE_VERSION}} -m '${{needs.initialization.outputs.RELEASE_VERSION}}' --force
@@ -120,6 +122,7 @@ jobs:
       - name: Set Dev Version
         run: |
           mvn -B versions:set \
+          -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{needs.initialization.outputs.NEXT_SNAPSHOT_VERSION}} \
           -DgenerateBackupPoms=false
 
