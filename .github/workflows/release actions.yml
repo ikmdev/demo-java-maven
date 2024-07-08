@@ -15,7 +15,6 @@ env:
   BRANCH_NAME: ${{github.ref_name}}
   TRUNK_BRANCH_NAME: main
   RELEASE_MESSAGE: ${{github.event.inputs.release_message}}
-  MAVEN_SETTING: '/home/ec2-user/maven/.m2/settings.xml'
 
 # Define jobs within the workflow
 jobs:
@@ -102,7 +101,6 @@ jobs:
       - name: Set Release Version
         run: |
           mvn -B versions:set \
-          -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{needs.initialization.outputs.RELEASE_VERSION}} \
           -DgenerateBackupPoms=false
 
@@ -122,7 +120,6 @@ jobs:
       - name: Set Dev Version
         run: |
           mvn -B versions:set \
-          -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{needs.initialization.outputs.NEXT_SNAPSHOT_VERSION}} \
           -DgenerateBackupPoms=false
 
