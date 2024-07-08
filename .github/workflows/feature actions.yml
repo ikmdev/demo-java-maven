@@ -121,7 +121,7 @@ jobs:
 
     steps:
       - name: If PR Does Not Exist
-        if: needs.check_if_pr_exist.outputs.prExists == 'true'
+        if: needs.check_if_pr_exist.outputs.prExists == 'false'
         run: |
           echo "ERROR: Pull Request Does Not Exist For ${{env.FEATURE_BRANCH}}"
           exit 1
@@ -191,7 +191,7 @@ jobs:
 
     steps:
       - name: If PR Does Not Exist
-        if: needs.check_if_pr_exist.outputs.prExists == 'true'
+        if: needs.check_if_pr_exist.outputs.prExists == 'false'
         run: |
           echo "ERROR: Pull Request Does Not Exist For ${{env.FEATURE_BRANCH}}"
           exit 1
