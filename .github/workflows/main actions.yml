@@ -23,37 +23,19 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           echo 'Running in main branch'
-          mvn clean install
+          mvn clean install \
+            --batch-mode \
+            -e \
+            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+            -PcodeQuality
 
       - name: Build with Maven -- Feature Branch
         if: github.ref != 'refs/heads/main'
         run: |
           echo 'Running in ${{github.ref_name}} branch'
+          java --version
           mvn clean install
-
-  publishing-to-artifact-repositories:
-
-    runs-on: ubuntu-latest
-    needs: build
-    env:
-      REPOSITORY_ID: "maven-snapshots"
-
-    steps:
-      - name: Checkout Code Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'adopt'
-          java-version: '21'
-
-      - name: Get Version
-        run: echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-
-      - name: Print Current Version
-        run: echo "Current Version Is - ${{env.POM_VERSION}}"
-
-      - name: Check If Release Version
-        if: ${{ !contains(env.POM_VERSION, '-SNAPSHOT') }}
-        run: echo "REPOSITORY_ID=maven-release" >> $GITHUB_ENV
+            --batch-mode \
+            -e \
+            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+            -PcodeQuality

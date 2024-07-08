@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: initialization
     permissions:
-      contents: write
+      contents: write   # Allow the workflow to write to the repository contents
 
     steps:
       - name: Setup Maven Action
@@ -133,7 +133,7 @@ jobs:
   # Creating a release
   create_release:
     name: Create Release
-    permissions: write-all
+    permissions: write-all    # Allow the workflow to write to all the repository resources
 
     needs:
       - initialization

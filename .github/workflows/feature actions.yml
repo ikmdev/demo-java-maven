@@ -51,8 +51,8 @@ jobs:
     if: github.event.inputs.action == 'Start'
 
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write     # Allow the workflow to write to the repository contents
+      pull-requests: write    # Allow the workflow to write to pull requests
 
     steps:
       - name: If PR Exist
@@ -115,9 +115,10 @@ jobs:
     name: Finish Action
     if: github.event.inputs.action == 'Finish'
     needs: check_if_pr_exist
+
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write     # Allow the workflow to write to the repository contents
+      pull-requests: write    # Allow the workflow to write to pull requests
 
     steps:
       - name: If PR Does Not Exist
@@ -185,9 +186,10 @@ jobs:
     name: Resume Action
     if: github.event.inputs.action == 'Resume'
     needs: check_if_pr_exist
+
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write     # Allow the workflow to write to the repository contents
+      pull-requests: write    # Allow the workflow to write to pull requests
 
     steps:
       - name: If PR Does Not Exist
