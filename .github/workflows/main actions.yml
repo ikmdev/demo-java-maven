@@ -35,6 +35,5 @@ jobs:
           echo 'Running in ${{github.ref_name}} branch'
           java --version
           mvn clean install
-            -e \
             -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
             -PcodeQuality
