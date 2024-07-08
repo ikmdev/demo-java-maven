@@ -1,33 +1,32 @@
-name: Pipeline Build
+name: Build Workflow
 
-run-name: 'Build Pipeline For ${{github.ref_name}}'
+run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
 
 on:
-  push:
+    push:
+    pull_request:
 
 jobs:
-  build:
+  build-job:
+    name: Build Job
     runs-on: ubuntu-latest
-
+    if: github.repository_owner == 'ikmdev'
     steps:
-      - name: Checkout Code Repository
-        uses: actions/checkout@v4
+          - name: Setup Maven Action
+            uses: s4u/setup-maven-action@v1.14.0
+            with:
+             checkout-fetch-depth: 0
+             java-version: 21
+             java-distribution: adopt
+             maven-version: 3.9.0
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'adopt'
-          java-version: '21'
-
-      - name: Build with Maven
-        if: github.ref == 'refs/heads/main'
-        run: |
-          echo 'Running in main branch'
-          mvn clean install \
-
-      - name: Build with Maven -- Feature Branch
-        if: github.ref != 'refs/heads/main'
-        run: |
-          echo 'Running in ${{github.ref_name}} branch'
-          java --version
-          mvn clean install
+          - name: Maven Build
+            if: github.ref == 'refs/heads/main'
+            run: |
+              mvn clean install 
+                
+          - name: Maven Build -- Feature Branch
+            if: github.ref != 'refs/heads/main'
+            run: |
+              java --version
+              mvn clean install 
