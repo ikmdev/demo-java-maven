@@ -111,8 +111,8 @@ jobs:
 
       - name: Create tag
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+          git config user.name "Cloud User"
           git add .
           git commit -m 'Release ${{needs.initialization.outputs.RELEASE_VERSION}}'
           git tag -a ${{needs.initialization.outputs.RELEASE_VERSION}} -m '${{needs.initialization.outputs.RELEASE_VERSION}}' --force
@@ -120,6 +120,7 @@ jobs:
       - name: Set Dev Version
         run: |
           mvn -B versions:set \
+          -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{needs.initialization.outputs.NEXT_SNAPSHOT_VERSION}} \
           -DgenerateBackupPoms=false
 
