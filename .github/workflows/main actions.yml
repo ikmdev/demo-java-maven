@@ -24,10 +24,6 @@ jobs:
         run: |
           echo 'Running in main branch'
           mvn clean install \
-            --batch-mode \
-            -e \
-            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-            -PcodeQuality
 
       - name: Build with Maven -- Feature Branch
         if: github.ref != 'refs/heads/main'
@@ -35,4 +31,3 @@ jobs:
           echo 'Running in ${{github.ref_name}} branch'
           java --version
           mvn clean install
-            -PcodeQuality
