@@ -1,0 +1,191 @@
+name: Release Versioning Workflow
+
+run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}"
+
+# Trigger workflow manually
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        description: Version To Increment (If Custom, Please Input Release or Development Version Below)
+        options:
+          - Major
+          - Minor
+          - Patch
+          - Custom
+        required: true
+
+      release_version:
+        type: string
+        description: Name of release. May follow SemVer (Major.Minor.Patch) format
+
+      development_version:
+            type: string
+            description: Name of next development version. Must follow SemVer + "-" + <TEXT> (Major.Minor.Patch-TEXT) format
+
+# Define environment parameters
+env:
+  ACTION_INPUT: ${{github.event.inputs.action}}
+  DEVELOPMENT_VERSION_INPUT: ${{github.event.inputs.development_version}}
+  RELEASE_VERSION_INPUT: ${{github.event.inputs.release_version}}
+
+# Define jobs within the workflow
+jobs:
+  get_current_version:
+    runs-on: ubuntu-latest
+    name: Get Current Version
+    outputs:
+      CURRENT_RELEASE_VERSION: ${{steps.splitVersion.outputs._0}}
+
+    steps:
+      - name: Stops If Fields Are Empty
+        if: env.ACTION_INPUT == 'Custom' && env.DEVELOPMENT_VERSION_INPUT == '' &&  env.RELEASE_VERSION_INPUT == ''
+        run: |
+          echo "Please Enter A Development Or Release Version"
+          exit 1
+
+      - name: Stop if Development input is empty
+        if: env.ACTION_INPUT == 'Custom' && env.DEVELOPMENT_VERSION_INPUT == ''
+        run: |
+          echo "Please Enter A Development Version"
+          exit 1
+
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Downloading Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Get Current POM Version
+        id: getPOMVersion
+        run: echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+
+      - name: Print Version
+        run: echo ${{steps.getPOMVersion.outputs.POM_VERSION}}
+
+      - name: Split version code
+        uses: xom9ikk/split@v1.1
+        id: splitVersion
+        with:
+          string: ${{steps.getPOMVersion.outputs.POM_VERSION}}
+          separator: -SNAPSHOT
+          limit: -1
+
+
+  get_custom_inputs:
+    runs-on: ubuntu-latest
+
+    name: Get Custom Inputs
+    needs: get_current_version
+    if: github.event.inputs.action == 'Custom'
+    outputs:
+      SNAPSHOT_VERSION: ${{steps.setOutputs.outputs.SNAPSHOT_VERSION}}
+      RELEASE_VERSION: ${{steps.setOutputs.outputs.RELEASE_VERSION}}
+
+    env:
+      CUSTOM_SNAPSHOT_VERSION: ${{github.event.inputs.development_version}}-SNAPSHOT
+
+    steps:
+      - name: If Development Version contains SNAPSHOT
+        if: contains(env.DEVELOPMENT_VERSION_INPUT, '-SNAPSHOT')
+        run: echo "CUSTOM_SNAPSHOT_VERSION=${{env.DEVELOPMENT_VERSION_INPUT}}" >> $GITHUB_ENV
+
+      - name: Set Ouputs
+        id: setOutputs
+        run: |
+          echo "SNAPSHOT_VERSION=${{env.CUSTOM_SNAPSHOT_VERSION}}" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION=${{env.RELEASE_VERSION_INPUT || needs.get_current_version.outputs.CURRENT_RELEASE_VERSION}}" >> $GITHUB_OUTPUT
+
+
+  call_release_workflow_with_custom_inputs:
+    needs: get_custom_inputs
+    name: Call Release Workflow With Custom Inputs
+    uses: ikmdev/Demo_Java_Maven/.github/workflows/reusable_release_workflow.yaml@main
+    permissions: write-all
+    secrets: inherit
+    with:
+      snapshot_version: ${{needs.get_custom_inputs.outputs.SNAPSHOT_VERSION}}
+      release_version: ${{needs.get_custom_inputs.outputs.RELEASE_VERSION}}
+
+
+  get_major_minor_patch_inputs:
+    runs-on: ubuntu-latest
+
+    name: Get Major, Minor or Patch Input
+    if: github.event.inputs.action != 'Custom'
+    needs: get_current_version
+    outputs:
+      RELEASE_VERSION: ${{needs.get_current_version.outputs.CURRENT_RELEASE_VERSION}}
+      _MAJOR: ${{steps.splitVersionSemVer.outputs._0}}
+      _MINOR: ${{steps.splitVersionSemVer.outputs._1}}
+      _PATCH: ${{steps.splitVersionSemVer.outputs._2}}
+
+    steps:
+      - name: Split version code - SemVer
+        uses: xom9ikk/split@v1.1
+        id: splitVersionSemVer
+        with:
+          string: ${{needs.get_current_version.outputs.CURRENT_RELEASE_VERSION}}
+          separator: .
+          limit: -1
+
+
+  increment_version:
+    runs-on: ubuntu-latest
+    needs: get_major_minor_patch_inputs
+    outputs:
+      NEXT_SNAPSHOT_VERSION: ${{steps.nextSnapshotVersion.outputs.NEXT_SNAPSHOT_VERSION}}
+      RELEASE_VERSION: ${{needs.get_major_minor_patch_inputs.outputs.RELEASE_VERSION}}
+
+    name: "Increment ${{github.event.inputs.action}} Version"
+    steps:
+      - name: Set Env - Major
+        shell: bash
+        run: |
+          VERSION_PICKED=${{env.ACTION_INPUT}}
+          if [[ "$VERSION_PICKED" == "Major" ]]; then
+            echo "VERSION_NUMBER=${{needs.get_major_minor_patch_inputs.outputs._MAJOR}}" >> $GITHUB_ENV
+          elif [[ "$VERSION_PICKED" == "Minor" ]]; then
+           echo "VERSION_NUMBER=${{needs.get_major_minor_patch_inputs.outputs._MINOR}}" >> $GITHUB_ENV
+          else
+           echo "VERSION_NUMBER=${{needs.get_major_minor_patch_inputs.outputs._PATCH}}" >> $GITHUB_ENV
+          fi
+
+      - name: Print Version
+        run: echo ${{env.ACTION_INPUT}} -- ${{env.VERSION_NUMBER}}
+
+      - name: Increment Version
+        run: echo "NEW_VERSION_NUMBER=$((${{env.VERSION_NUMBER}} + 1))" >> $GITHUB_ENV
+
+      - name: Generate New Snapshot Version Output
+        id: nextSnapshotVersion
+        shell: bash
+        run: |
+          VERSION_PICKED=${{env.ACTION_INPUT}}
+          if [[ "$VERSION_PICKED" == "Major" ]]; then
+           echo "NEXT_SNAPSHOT_VERSION=${{env.NEW_VERSION_NUMBER}}.0.0" >> $GITHUB_OUTPUT
+          elif [[ "$VERSION_PICKED" == "Minor" ]]; then
+           echo "NEXT_SNAPSHOT_VERSION=${{needs.get_major_minor_patch_inputs.outputs._MAJOR}}.${{env.NEW_VERSION_NUMBER}}.0" >> $GITHUB_OUTPUT
+          else
+           echo "NEXT_SNAPSHOT_VERSION=${{needs.get_major_minor_patch_inputs.outputs._MAJOR}}.${{needs.get_major_minor_patch_inputs.outputs._MINOR}}.${{env.NEW_VERSION_NUMBER}}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Print Versions
+        run: |
+          echo "Next Development Version: ${{steps.nextSnapshotVersion.outputs.NEXT_SNAPSHOT_VERSION}}-SNAPSHOT"
+          echo "Release Version: ${{needs.get_major_minor_patch_inputs.outputs.RELEASE_VERSION}}"
+
+  call_release_workflow_incremented_version:
+    needs:
+      - increment_version
+    uses: ikmdev/Demo_Java_Maven/.github/workflows/reusable_release_workflow.yaml@main
+    name: Call Release Workflow With Incremented Version
+    permissions: write-all
+    secrets: inherit
+    with:
+      snapshot_version: ${{needs.increment_version.outputs.NEXT_SNAPSHOT_VERSION}}-SNAPSHOT
+      release_version: ${{needs.increment_version.outputs.RELEASE_VERSION}}

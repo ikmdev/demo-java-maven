@@ -1,15 +1,15 @@
-name: Main Build Workflow
+name: Forked Build Workflow
 
-run-name: 'Build Pipeline For ${{github.ref_name}}'
+run-name: 'Forked Build Workflow -- ${{github.ref_name}}'
 
 on:
   push:
-  pull_request:
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'ikmdev'
+    if: github.repository_owner != 'ikmdev' || github.event.repository.fork == 'true'
 
     steps:
       - name: Checkout Code Repository
@@ -24,12 +24,10 @@ jobs:
       - name: Build with Maven
         if: github.ref == 'refs/heads/main'
         run: |
-          echo 'Running in main branch'
-          mvn clean install \
+          mvn clean install 
 
       - name: Build with Maven -- Feature Branch
         if: github.ref != 'refs/heads/main'
         run: |
-          echo 'Running in ${{github.ref_name}} branch'
           java --version
           mvn clean install
