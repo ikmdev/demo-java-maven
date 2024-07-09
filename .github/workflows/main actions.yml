@@ -1,13 +1,15 @@
-name: Pipeline Build
+name: Main Build Workflow
 
 run-name: 'Build Pipeline For ${{github.ref_name}}'
 
 on:
   push:
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'ikmdev'
 
     steps:
       - name: Checkout Code Repository
