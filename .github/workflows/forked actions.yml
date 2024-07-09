@@ -1,0 +1,33 @@
+name: Forked Build Workflow
+
+run-name: 'Forked Build Workflow -- ${{github.ref_name}}'
+
+on:
+  push:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.repository_owner != 'ikmdev' || github.event.repository.fork == 'true'
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Build with Maven
+        if: github.ref == 'refs/heads/main'
+        run: |
+          mvn clean install 
+
+      - name: Build with Maven -- Feature Branch
+        if: github.ref != 'refs/heads/main'
+        run: |
+          java --version
+          mvn clean install
