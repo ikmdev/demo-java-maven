@@ -1,0 +1,45 @@
+name: Build Pipeline
+
+run-name: 'Build Pipeline For ${{github.ref_name}}'
+
+on:
+    push:
+     branches:
+        - "main"
+jobs:
+  build-job:
+    name: Build Job
+    runs-on: ubuntu-latest
+    steps:
+          - name: Checkout Code Repository
+            uses: actions/checkout@v4
+          - name: Downloading Java
+            uses: actions/setup-java@v4
+            with:
+                java-version: '11'
+                distribution: 'temurin'
+          - name: Maven Build
+            if: github.ref == 'refs/heads/main'
+            run: |
+              echo 'Running in main branch'
+              mvn clean install -PcodeQuality
+          - name: Maven Build -- Feature Branch
+            if: github.ref != 'refs/heads/main'
+            run: |
+              echo 'Running in ${{github.ref_name}} branch'
+              mvn clean install -PcodeQuality
+          - name: SonarCloud scan
+            uses: sonarsource/sonarcloud-github-action@master
+            env: 
+             GITHUB_TOKEN: ${{ secrets.GIT_HUB_TOKEN}} 
+             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN}}
+             SONAR_HOST_URL: ${{ 'https://sonarcloud.io/' }}
+            with:
+             args: >
+              -Dsonar.organization=casaras1
+              -Dsonar.projectKey=casaras1_demo-java-maven
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+              -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml
+              -Dsonar.java.binaries=target/classes
+              -Dsonar.sources=src/main/java/
+              -Dsonar.tests=src/test/java
