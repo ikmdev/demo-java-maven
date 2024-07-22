@@ -1,6 +1,6 @@
-name: Sonar Cloud Build Pipeline
+name: Sonar Cloud Demo Build Pipeline
 
-run-name: 'Build Pipeline For ${{github.ref_name}}'
+run-name: 'SonarCloud Demo Build Pipeline For ${{github.ref_name}}'
 
 on:
     push:
