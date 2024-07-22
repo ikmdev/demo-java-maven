@@ -1,4 +1,4 @@
-name: Build Pipeline
+name: Sonar Cloud Build Pipeline
 
 run-name: 'Build Pipeline For ${{github.ref_name}}'
 
