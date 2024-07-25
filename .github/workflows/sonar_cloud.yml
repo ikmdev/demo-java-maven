@@ -10,17 +10,16 @@ jobs:
   build-job:
     name: Build Job
     runs-on: self-hosted
-    container:
-        # Runner docker image 
-        image: ubuntu:22.04
     steps:
           - name: Checkout Code Repository
             uses: actions/checkout@v4
-          - name: Downloading Java
-            uses: actions/setup-java@v4
+          - name: Setup Maven Action
+            uses: s4u/setup-maven-action@v1.14.0
             with:
-                java-version: '11'
-                distribution: 'temurin'
+                checkout-fetch-depth: 0
+                java-version: 21
+                java-distribution: adopt
+                maven-version: 3.9.0
           - name: Maven Build
             if: github.ref == 'refs/heads/main'
             run: |
@@ -31,18 +30,15 @@ jobs:
             run: |
               echo 'Running in ${{github.ref_name}} branch'
               mvn clean install -PcodeQuality
-          - name: SonarCloud scan
-            uses: sonarsource/sonarcloud-github-action@master
-            env: 
-             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}} 
-             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN}}
-             SONAR_HOST_URL: ${{ 'https://sonarcloud.io/' }}
-            with:
-             args: >
-              -Dsonar.organization=ikmdev
-              -Dsonar.projectKey=ikmdev_demo-java-maven
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-              -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml
-              -Dsonar.java.binaries=target/classes
-              -Dsonar.sources=src/main/java/
+          - name: Build and analyze
+            env:
+              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            run: mvn verify sonar:sonar \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.organization=ikmdev \
+              -Dsonar.projectKey=ikmdev_demo-java-maven \
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+              -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml \
+              -Dsonar.java.binaries=target/classes \
+              -Dsonar.sources=src/main/java/ \
               -Dsonar.tests=src/test/java
