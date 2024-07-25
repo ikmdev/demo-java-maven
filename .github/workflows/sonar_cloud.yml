@@ -10,6 +10,9 @@ jobs:
   build-job:
     name: Build Job
     runs-on: self-hosted
+    container:
+        # Runner docker image 
+        image: ubuntu:22.04
     steps:
           - name: Checkout Code Repository
             uses: actions/checkout@v4
