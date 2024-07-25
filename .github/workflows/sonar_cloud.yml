@@ -38,7 +38,7 @@ jobs:
             run: mvn verify sonar:sonar 
               -Dsonar.organization=${{ github.repository_owner }}
               -Dsonar.sources=src/main/java 
-              -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.repository }}
+              -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} 
               -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml 
               -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml 
               -Dsonar.java.binaries=target/classes 
