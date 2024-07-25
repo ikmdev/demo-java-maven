@@ -35,11 +35,11 @@ jobs:
               SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
               SONAR_HOST_URL: ${{ 'https://sonarcloud.io/' }}
               SONAR_ORGANIZATION: ${{ 'ikmdev' }}  
-            run: mvn verify sonar:sonar \
-              -Dsonar.organization=ikmdev \
-              -Dsonar.sources=src/main/java \
-              -Dsonar.projectKey=ikmdev_demo-java-maven \
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-              -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml \
-              -Dsonar.java.binaries=target/classes \
+            run: mvn verify sonar:sonar 
+              -Dsonar.organization=ikmdev 
+              -Dsonar.sources=src/main/java 
+              -Dsonar.projectKey=ikmdev_demo-java-maven 
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml 
+              -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml 
+              -Dsonar.java.binaries=target/classes 
               -Dsonar.tests=src/test/java
