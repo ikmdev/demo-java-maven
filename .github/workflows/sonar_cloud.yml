@@ -36,8 +36,8 @@ jobs:
              SONAR_HOST_URL: ${{ 'https://sonarcloud.io/' }}
             with:
              args: >
-              -Dsonar.organization=casaras1
-              -Dsonar.projectKey=casaras1_demo-java-maven
+              -Dsonar.organization=ikmdev
+              -Dsonar.projectKey=demo-java-maven
               -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
               -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml
               -Dsonar.java.binaries=target/classes
