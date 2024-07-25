@@ -14,6 +14,11 @@
 
     <inceptionYear>2023</inceptionYear>
 
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -30,7 +35,26 @@
             <email>support@ikm.dev</email>
         </developer>
     </developers>
-
+    
+    <dependencyManagement>
+		<dependencies>
+				<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.13.1</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
+	<dependencies>
+		    <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+	</dependencies>
+    
     <distributionManagement>
         <repository>
             <id>github</id>
@@ -39,9 +63,41 @@
         </repository>
     </distributionManagement>
 
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
+
+    <profiles>
+        <profile>
+            <id>codeQuality</id>
+            <build>
+                <plugins>
+ 
+				 <plugin>
+				            <groupId>org.jacoco</groupId>
+				            <artifactId>jacoco-maven-plugin</artifactId>
+					    <version>0.8.8</version>
+				            <executions>						
+				                <execution>
+				                    <goals>
+				                        <goal>prepare-agent</goal>
+				                    </goals>
+				                </execution>
+				                <!-- attached to Maven test phase -->
+				                <execution>
+				                    <id>report</id>
+				                    <phase>test</phase>
+				                    <goals>
+				                        <goal>report</goal>
+				                    </goals>
+				                </execution>
+				            </executions>
+				    </plugin>				        
+	                <plugin>
+	                    <artifactId>maven-surefire-plugin</artifactId>
+	                    <version>2.19.1</version>
+	                </plugin>
+                                    
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
