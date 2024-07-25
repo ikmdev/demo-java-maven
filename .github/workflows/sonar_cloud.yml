@@ -36,9 +36,9 @@ jobs:
               SONAR_HOST_URL: ${{ 'https://sonarcloud.io/' }}
               SONAR_ORGANIZATION: ${{ 'ikmdev' }}  
             run: mvn verify sonar:sonar 
-              -Dsonar.organization=ikmdev 
+              -Dsonar.organization=${{ github.repository_owner }}
               -Dsonar.sources=src/main/java 
-              -Dsonar.projectKey=ikmdev_demo-java-maven 
+              -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.repository }}
               -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml 
               -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml 
               -Dsonar.java.binaries=target/classes 
