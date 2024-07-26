@@ -30,7 +30,7 @@ jobs:
             run: |
               echo 'Running in ${{github.ref_name}} branch'
               mvn clean install -PcodeQuality
-          - name: Build and analyze
+          - name: SonarCloud Build and analyze
             env:
               SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
               SONAR_HOST_URL: ${{ 'https://sonarcloud.io/' }}
