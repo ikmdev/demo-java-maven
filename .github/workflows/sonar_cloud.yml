@@ -3,9 +3,11 @@ name: Sonar Cloud Demo Build Pipeline
 run-name: 'SonarCloud Demo Build Pipeline For ${{github.ref_name}}'
 
 on:
-    push:
-     branches:
-        - "main"
+  workflow_dispatch:
+
+#    push:
+#     branches:
+#        - "main"
 jobs:
   build-job:
     name: Build Job
