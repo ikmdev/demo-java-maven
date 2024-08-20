@@ -24,26 +24,3 @@ jobs:
         with:
           branch_name: ${{env.BRANCH_NAME}}
 
-#      - name: Checkout Repository
-#        uses: actions/checkout@v4
-#
-#      - name: Maven Build
-#        if: inputs.branch_name == 'main' || inputs.branch_name == 'master'
-#        shell: bash
-#        run: |
-#          mvn clean install -U \
-#            --batch-mode \
-#            -e \
-#            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-#            -PcodeQuality
-#
-#      - name: Maven Build -- Feature Branch
-#        if: inputs.branch_name != 'main' && inputs.branch_name != 'master'
-#        shell: bash
-#        run: |
-#          mvn clean install -U \
-#            --batch-mode \
-#            -e \
-#            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-#            -Denforcer.skip=true \
-#            -PcodeQuality
