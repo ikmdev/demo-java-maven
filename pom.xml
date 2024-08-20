@@ -69,7 +69,7 @@
             <id>codeQuality</id>
             <build>
                 <plugins>
-                    <plugin>
+                    <!-- <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-wrapper-plugin</artifactId>
                         <version>3.3.2</version>
@@ -84,7 +84,7 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
+                    </plugin> -->
 				    <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
