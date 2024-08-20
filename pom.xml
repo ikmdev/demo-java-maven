@@ -69,22 +69,6 @@
             <id>codeQuality</id>
             <build>
                 <plugins>
-                    <!-- <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-wrapper-plugin</artifactId>
-                        <version>3.3.2</version>
-                        <executions>
-                            <execution>
-                                <id>default-cli</id>
-                                <goals>
-                                    <goal>generate-wrapper</goal>
-                                </goals>
-                                <configuration>
-                                    <mavenVersion>3.9.8</mavenVersion>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin> -->
 				    <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
