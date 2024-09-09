@@ -94,8 +94,12 @@ For open source projects, say how it is licensed.
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
 
-## Test
+## Issues and Contributions
+Technical and non-technical issues can be reported to the [Issue Tracker](https://github.com/ikmdev/demo-java-maven/issues).
 
+Contributions can be submitted via pull requests. Please check the [contribution guide](doc/how-to-contribute.md) for more details.
+
+## Test
 Test changes
 
 Even more changes
