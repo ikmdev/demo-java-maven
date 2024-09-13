@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Ignore;
 
-public class HelloTest {
+public class DemoClassTest {
 	private int x = 6;
 	
 	@Test
@@ -23,7 +23,7 @@ public class HelloTest {
 
         assertEquals("Hello mkyong", helloText);
         
-        Hello hello = new Hello();
+        DemoClass hello = new DemoClass();
         
         int z = hello.sum(3, 4);
         
@@ -38,7 +38,7 @@ public class HelloTest {
 
         assertEquals("Hello mkyong", helloText);
         
-        Hello hello = new Hello();
+        DemoClass hello = new DemoClass();
         
         int z = hello.multiply(3, 4);
         
@@ -54,7 +54,7 @@ public class HelloTest {
 
         assertEquals("Hello mkyong", helloText);
         
-        Hello hello = new Hello();
+        DemoClass hello = new DemoClass();
         
         float z = hello.divide(6, 2);
         
@@ -69,7 +69,7 @@ public class HelloTest {
 
         assertEquals("Hello mkyong", helloText);
         
-        Hello hello = new Hello();
+        DemoClass hello = new DemoClass();
         
         int z = hello.multiply(3, 4);
         
@@ -85,7 +85,7 @@ public class HelloTest {
 
         assertEquals("Hello mkyong", helloText);
         
-        Hello hello = new Hello();
+        DemoClass hello = new DemoClass();
         
         int z = hello.multiply(3, 4);
         
