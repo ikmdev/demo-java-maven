@@ -41,7 +41,6 @@ jobs:
               -Dsonar.organization=${{ github.repository_owner }}
               -Dsonar.sources=src/main/java 
               -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} 
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml 
-              -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml 
-              -Dsonar.java.binaries=target/classes 
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+              -Dsonar.java.binaries=target/classes
               -Dsonar.tests=src/test/java
