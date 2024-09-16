@@ -11,6 +11,14 @@ jobs:
     steps:
       - uses: actions/setup-java@v4
         with:
+          sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
+          sonar_host_url: ${{ 'https://sonarcloud.io/' }}
+          sonar_organization: ${{ github.repository_owner }}
+          sonar_sources: src/main/java
+          sonar_projectKey: ${{ github.repository_owner }}_${{ github.event.repository.name }}
+          sonar_coverage_jacoco_xmlReportPaths: target/site/jacoco/jacoco.xml
+          sonar_java_binaries: target/classes
+          sonar_tests: src/test/java
           java-version: '21'
           distribution: 'zulu'
       - name: IKMDEV build
