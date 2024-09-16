@@ -18,6 +18,6 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
       - name: Sonar Cloud Build and Upload
-        uses: ikmdev/maven-clean-install-build-action@main
+        uses: casaras1/maven-clean-install-build-action@main
         with:
           branch_name: ${{env.BRANCH_NAME}}
