@@ -21,15 +21,3 @@ jobs:
         uses: ikmdev/maven-clean-install-build-action@main
         with:
           branch_name: ${{env.BRANCH_NAME}}
-      - name: SonarCloud Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ 'https://sonarcloud.io/' }}
-          SONAR_ORGANIZATION: ${{ 'ikmdev' }}  
-          run: mvn verify sonar:sonar 
-              -Dsonar.organization=${{ github.repository_owner }}
-              -Dsonar.sources=src/main/java 
-              -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} 
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-              -Dsonar.java.binaries=target/classes
-              -Dsonar.tests=src/test/java
