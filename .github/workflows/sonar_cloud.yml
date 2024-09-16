@@ -11,13 +11,13 @@ on:
 jobs:
   build-job:
     name: Build Job
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'zulu'
-      - name: Build IKMDEV Code
+      - name: Sonar Cloud Build and Upload
         uses: ikmdev/maven-clean-install-build-action@main
         with:
           branch_name: ${{env.BRANCH_NAME}}
