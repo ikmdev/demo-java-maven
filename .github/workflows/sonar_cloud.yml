@@ -11,13 +11,36 @@ on:
 jobs:
   build-job:
     name: Build Job
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'zulu'
-      - name: Sonar Cloud Build and Upload
-        uses: casaras1/maven-clean-install-build-action@main
-        with:
-          branch_name: ${{env.BRANCH_NAME}}
+          - name: Checkout Code Repository
+            uses: actions/checkout@v4
+          - name: Setup Maven Action
+            uses: s4u/setup-maven-action@v1.14.0
+            with:
+                checkout-fetch-depth: 0
+                java-version: 21
+                java-distribution: adopt
+                maven-version: 3.9.0
+          - name: Maven Build
+            if: github.ref == 'refs/heads/main'
+            run: |
+              echo 'Running in main branch'
+              mvn clean install -PcodeQuality
+          - name: Maven Build -- Feature Branch
+            if: github.ref != 'refs/heads/main'
+            run: |
+              echo 'Running in ${{github.ref_name}} branch'
+              mvn clean install -PcodeQuality
+          - name: SonarCloud Build and analyze
+            env:
+              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+              SONAR_HOST_URL: ${{ 'https://sonarcloud.io/' }}
+              SONAR_ORGANIZATION: ${{ 'ikmdev' }}  
+            run: mvn verify sonar:sonar 
+              -Dsonar.organization=${{ github.repository_owner }}
+              -Dsonar.sources=src/main/java 
+              -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} 
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+              -Dsonar.java.binaries=target/classes
+              -Dsonar.tests=src/test/java
