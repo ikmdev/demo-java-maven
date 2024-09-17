@@ -25,4 +25,3 @@ jobs:
           sonarcloud_java_binaries: ${{ 'target/classes' }}
           sonarcloud_tests: ${{ 'src/test/java' }}        
           branch_name: ${{env.BRANCH_NAME}}
-          
