@@ -9,7 +9,7 @@
  */
 package dev.ikm.examples;
 
-class Hello {
+class DemoClass {
     public static void main(String []args) {
         System.out.println("Hello, Super Awesome World!");
     }

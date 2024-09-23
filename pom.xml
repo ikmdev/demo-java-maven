@@ -12,11 +12,21 @@
     </description>
     <packaging>jar</packaging>
 
-    <inceptionYear>2023</inceptionYear>
-
     <properties>
+		<configuration-root>src/main/java</configuration-root>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        
+        
+		<sonar.skip>false</sonar.skip>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <sonar.language>java</sonar.language>
+        <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
+        <sonar.login>258e8d5920d5f364d22de9f3b6a1cebda9966c35</sonar.login>
+        <sonar.token>258e8d5920d5f364d22de9f3b6a1cebda9966c35</sonar.token> <!--9bf6a80bdb77ad4dd9427f7db4d4318b8d89d264 -->
+        <sonar.organization>sonarcloudorganizationdev</sonar.organization>
+        <maven.sonarqube.version>3.9.1.2184</maven.sonarqube.version>        
     </properties>
 
     <licenses>
@@ -63,6 +73,48 @@
         </repository>
     </distributionManagement>
 
+   <build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+				    <groupId>org.codehaus.mojo</groupId>
+				    <artifactId>license-maven-plugin</artifactId>
+				    <version>2.4.0</version>
+				    <configuration>
+						<verbose>false</verbose>
+				    	
+				    	<includes>
+                			<includes>**/*.java</includes>
+              			</includes>
+              									
+          				<addSvnKeyWords>true</addSvnKeyWords>
+				        <licenseName>demo-java-maven-license</licenseName>
+				        <projectName>demo-java-maven Project</projectName>
+				        <organizationName>IKMDEV</organizationName>
+				        <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+				        <inceptionYear>2024</inceptionYear>
+        				<processStartTag>========================LICENSE_START=================================</processStartTag>
+        				<processEndTag>=========================LICENSE_END==================================</processEndTag>
+				        <licenseResolver>${project.baseUri}/src/license</licenseResolver>
+				        <descriptionTemplate>${basedir}/src/license/licenseDescriptionTemplate.ftl</descriptionTemplate>
+				    </configuration>
+				    <executions>
+				        <execution>
+				            <id>first</id>
+				            <goals>
+				                <goal>update-file-header</goal>
+				                <goal>update-project-license</goal>
+				                <goal>download-licenses</goal>
+				                <goal>third-party-report</goal>
+				                <goal>license-list</goal>
+				            </goals>
+				            <phase>process-sources</phase>
+				        </execution>
+				    </executions>
+				</plugin>
+			</plugins>
+    	</pluginManagement>
+    </build>	
 
     <profiles>
         <profile>
