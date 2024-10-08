@@ -4,7 +4,14 @@ run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
 
 on:
   push:
+    branches: 
+      - main
+      - "feature/**"
   pull_request:
+      types: 
+        - opened
+        - synchronize
+        - reopened
 
 env:
   BRANCH_NAME: ${{github.ref_name}}
