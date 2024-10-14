@@ -79,9 +79,9 @@ public class HelloTest {
         
         Hello hello = new Hello();
         
-        int z = hello.multiply(7, 4);
+        int z = hello.multiply(4, 4);
         
-        assertEquals(z, 44);
+        assertEquals(z, 16);
 
     }	
 	
