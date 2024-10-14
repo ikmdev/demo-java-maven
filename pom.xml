@@ -17,6 +17,10 @@
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <sonar.projectKey>ikmdev_demo-java-maven</sonar.projectKey>
+        <sonar.language>java</sonar.language>
+        <sonar.organization>ikmdev</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <licenses>
