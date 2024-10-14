@@ -73,15 +73,15 @@ public class HelloTest {
 	@Test
     public void testFail3() {
 		
-		String helloText = "Hello mkyong";
+		String helloText = "Should fail";
 
-        assertEquals("Hello mkyong", helloText);
+        assertEquals("Should fail", helloText);
         
         Hello hello = new Hello();
         
-        int z = hello.multiply(3, 4);
+        int z = hello.multiply(7, 4);
         
-        assertEquals(z, 12);
+        assertEquals(z, 44);
 
     }	
 	
