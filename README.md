@@ -1,6 +1,6 @@
 # Example Java-Maven Project
 
-Contribution from Jason Taylor & Uyi
+Contribution from Jason Taylor
 
 ### Team Ownership - Product Owner
 Automation Team
