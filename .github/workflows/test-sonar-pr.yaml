@@ -1,0 +1,33 @@
+name: Testing Sonar
+
+run-name: 'Testing Sonar -- ${{github.event.workflow_run.head_branch}}'
+
+on:
+   workflow_run:
+    workflows:
+      - Build Workflow
+    types:
+      - completed
+        
+        
+jobs:
+  Sonar-Cloud-Test:
+      name: Sonar-Cloud-Test
+      runs-on: ubuntu-24.04
+      if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
+      steps:
+      - uses: actions/setup-java@v4
+        with:
+                java-version: '21'
+                distribution: 'zulu'
+
+
+      - name: Build IKMDEV Code
+        uses: ikmdev/maven-clean-install-build-action@test
+        with:
+          branch_name:  ${{github.event.workflow_run.head_branch}}
+          repo_name: ${{github.event.workflow_run.head_repository.full_name}}
+          sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
+          sonarcloud_host_url: ${{ 'https://sonarcloud.io/' }}
+          sonarcloud_organization: "ikmdev"
+          sonarcloud_projectKey: "ikmdev_${{ github.event.repository.name }}"
