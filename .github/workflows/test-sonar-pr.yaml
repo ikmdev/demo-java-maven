@@ -1,6 +1,6 @@
-name: Publish Artifacts Workflow
+name: Testing Sonar
 
-run-name: 'Publish Artifacts To Nexus -- ${{github.event.workflow_run.head_branch}}'
+run-name: 'Testing Sonar -- ${{github.event.workflow_run.head_branch}}'
 
 on:
    workflow_run:
