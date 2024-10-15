@@ -11,8 +11,8 @@ on:
         
         
 jobs:
-  publish-artifacts:
-      name: Publish Artifacts
+  Sonar-Cloud-Test:
+      name: Sonar-Cloud-Test
       runs-on: ubuntu-24.04
       if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
       steps:
