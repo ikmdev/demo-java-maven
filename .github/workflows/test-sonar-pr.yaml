@@ -26,6 +26,7 @@ jobs:
         uses: ikmdev/maven-clean-install-build-action@test
         with:
           branch_name: ${{env.BRANCH_NAME}}
+          repo_name: ${{github.event.workflow_run.head_repository.full_name}}
           sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
           sonarcloud_host_url: ${{ 'https://sonarcloud.io/' }}
           sonarcloud_organization: "ikmdev"
