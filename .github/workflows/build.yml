@@ -36,7 +36,7 @@ jobs:
             repository: maven-releases
             coordinates: groupId=dev.ikm.data artifactId=test_data version=1.0.0
             assets: extension=csv
-        filename: ./target/test_data.csv
+            filename: ./target/test_data.csv
     
       - name: Build IKMDEV Code
         uses: casaras1/maven-clean-install-build-action@main
