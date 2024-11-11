@@ -3,11 +3,11 @@ name: Testing Sonar
 run-name: 'Testing Sonar -- ${{github.event.workflow_run.head_branch}}'
 
 on:
-   workflow_run:
-    workflows:
-      - Build Workflow
-    types:
-      - completed
+   workflow_dispatch:
+    # workflows:
+    #   - Build Workflow
+    # types:
+    #   - completed
         
         
 jobs:
