@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Ignore;
 
-public class DemoClassTest {
+public class DemoClassITTest {
 	private int x = 6;
 	
 	@Test
