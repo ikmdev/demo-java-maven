@@ -25,6 +25,19 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
+    
+      - name: Nexus Repo Publish
+        uses: sonatype-nexus-community/nexus-repo-github-action@master
+        with:
+            serverUrl: https://nexus.tinkarbuild.com/repository
+            username: admin
+            password: ${{ 'Nexusadmin321@' }}
+            format: maven2
+            repository: maven-releases
+            coordinates: groupId=dev.ikm.data artifactId=test_data version=1.0.0
+            assets: extension=csv
+        filename: ./target/test_data.csv
+    
       - name: Build IKMDEV Code
         uses: casaras1/maven-clean-install-build-action@main
         with:
