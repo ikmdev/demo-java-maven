@@ -26,17 +26,38 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
     
-      - name: Nexus Repo Publish
-        uses: sonatype-nexus-community/nexus-repo-github-action@master
-        with:
-            serverUrl: https://nexus.tinkarbuild.com/repository
-            username: admin
-            password: ${{ 'Nexusadmin321@' }}
-            format: maven2
-            repository: maven-releases
-            coordinates: groupId=dev.ikm.data artifactId=test_data version=1.0.0
-            assets: extension=csv
-        filename: ./target/test_data.csv
+      - name: Set up Nexus credentials
+        env:
+          NEXUS_USERNAME: ${{ 'admin' }}
+          NEXUS_PASSWORD: ${{ 'Nexusadmin321@' }}
+        run: |
+          echo "NEXUS_USERNAME=${NEXUS_USERNAME}" >> $GITHUB_ENV
+          echo "NEXUS_PASSWORD=${NEXUS_PASSWORD}" >> $GITHUB_ENV
+
+      - name: Download CSV from Nexus
+        env:
+          NEXUS_USERNAME: ${{ 'admin' }}
+          NEXUS_PASSWORD: ${{ 'Nexusadmin321@' }}
+        run: |
+          # Define variables
+          NEXUS_URL="https://nexus.tinkarbuild.com/repository/maven-releases/dev/ikm/data/test_data/1.0/test_data-1.0-dev.ikm.data.csv"
+          TARGET_DIR="target"
+          CSV_FILE="test_data-1.0-dev.ikm.data.csv"
+
+          # Create target directory if it doesn't exist
+          mkdir -p $TARGET_DIR
+
+          # Download the CSV file
+          curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" -o "$TARGET_DIR/$CSV_FILE" "$NEXUS_URL"
+
+      - name: Verify CSV download
+        run: |
+          if [ -f "target/test_data-1.0-dev.ikm.data.csv" ]; then
+            echo "CSV file downloaded successfully."
+          else
+            echo "CSV file download failed."
+            exit 1
+          fi
     
       - name: Build IKMDEV Code
         uses: casaras1/maven-clean-install-build-action@main
