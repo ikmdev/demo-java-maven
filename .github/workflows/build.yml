@@ -54,6 +54,7 @@ jobs:
         run: |
           if [ -f "target/test_data-1.0-dev.ikm.data.csv" ]; then
             echo "CSV file downloaded successfully."
+            echo "$pwd"
           else
             echo "CSV file download failed."
             exit 1
