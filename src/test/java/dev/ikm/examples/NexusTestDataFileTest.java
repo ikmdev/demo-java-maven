@@ -18,13 +18,14 @@ public class NexusTestDataFileTest {
 	@Test
 	public void testDoubleNumber() {
 
-		String userHomeM2Repository = System.getProperty("user.home") + "\\.m2\\repository";
+		// String userHomeM2Repository = System.getProperty("user.home") + "\\.m2\\repository";
 
-		System.out.println(userHomeM2Repository);
+		String csvFilePath = System.getenv("CSV_FILE_PATH");
+		System.out.println("CSV_FILE_PATH" + userHomeM2Repository);
 
 		// Path to the CSV file in the target/resources directory
 		//String csvFilePath = userHomeM2Repository + "\\dev\\ikm\\data\\test_data\\1.0\\test_data-1.0-dev.ikm.data.csv";
-		String csvFilePath = "home/runner"+ "/test_data-1.0-dev.ikm.data.csv";
+		// String csvFilePath = "home/runner+ "/test_data-1.0-dev.ikm.data.csv";
 
 		try (CSVReader csvReader = new CSVReader(new FileReader(csvFilePath))) {
 
