@@ -50,6 +50,7 @@ jobs:
 
           # Download the CSV file
           curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" -o "$TARGET_DIR/$CSV_FILE" "$NEXUS_URL"
+          cat $GITHUB_WORKSPACE/target/test_data-1.0-dev.ikm.data.csv
           
       - name: Build IKMDEV Code
         env:
