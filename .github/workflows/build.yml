@@ -52,6 +52,18 @@ jobs:
           curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" -o "$TARGET_DIR/$CSV_FILE" "$NEXUS_URL"
           cat $GITHUB_WORKSPACE/target/test_data-1.0-dev.ikm.data.csv
           
+      - name: Upload CSV file
+        uses: actions/upload-artifact@v3
+        with:
+             name: csv-file
+             path: /home/runner/work/demo-java-maven/demo-java-maven/target/test_data-1.0-dev.ikm.data.csv
+
+      - name: download CSV file
+        uses: actions/download-artifact@v3
+        with:
+          name: csv-file
+          path: /home/runner/work/demo-java-maven/demo-java-maven/target/    
+          
       - name: Build IKMDEV Code
         env:
           NEXUS_USERNAME: ${{ 'admin' }}
