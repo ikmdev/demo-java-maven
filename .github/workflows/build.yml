@@ -42,7 +42,7 @@ jobs:
           # Define variables
           NEXUS_URL="https://nexus.tinkarbuild.com/repository/maven-releases/dev/ikm/data/test_data/1.0/test_data-1.0-dev.ikm.data.csv"
           TARGET_DIR="home/runner"
-          echo "$(pwd)" 
+          echo "WORK_DIReCTORY $(pwd)" 
           CSV_FILE="test_data-1.0-dev.ikm.data.csv"
 
           # Create target directory if it doesn't exist
