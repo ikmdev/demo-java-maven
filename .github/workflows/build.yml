@@ -66,6 +66,13 @@ jobs:
         with:
           name: csv-file
           path: /home/runner/work/demo-java-maven/demo-java-maven/target/test_data-1.0-dev.ikm.data.csv
+
+      - name: download CSV file
+        uses: actions/download-artifact@v3
+        with:
+          name: csv-file
+          path: /home/runner/work/demo-java-maven/demo-java-maven/target/
+          
           
       - name: Build IKMDEV Code
         uses: casaras1/maven-clean-install-build-action@main
