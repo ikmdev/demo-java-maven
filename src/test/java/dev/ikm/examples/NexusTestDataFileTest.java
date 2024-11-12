@@ -24,7 +24,7 @@ public class NexusTestDataFileTest {
 
 		// Path to the CSV file in the target/resources directory
 		//String csvFilePath = userHomeM2Repository + "\\dev\\ikm\\data\\test_data\\1.0\\test_data-1.0-dev.ikm.data.csv";
-		String csvFilePath = "target"+ "/test_data-1.0-dev.ikm.data.csv";
+		String csvFilePath = "home/runner"+ "/test_data-1.0-dev.ikm.data.csv";
 
 		try (CSVReader csvReader = new CSVReader(new FileReader(csvFilePath))) {
 
