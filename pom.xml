@@ -12,7 +12,6 @@
     </description>
     <packaging>jar</packaging>
 
-<!--
 	<repositories>
         <repository>
             <id>nexus-repo</id>
@@ -27,7 +26,7 @@
             </snapshots>       
         </repository>
     </repositories>
--->
+
 
     <properties>
 		<configuration-root>src/main/java</configuration-root>
@@ -89,15 +88,14 @@
 				<artifactId>opencsv</artifactId>
     			<version>5.5.2</version>
 			</dependency>		    				
-<!--    		
+    		
 			<dependency>
   				<groupId>dev.ikm.data</groupId>
   				<artifactId>test_data</artifactId>
   				<version>1.0</version>
   				<classifier>dev.ikm.data</classifier>
   				<type>csv</type>
-			</dependency>  
--->			      
+			</dependency>        
 	</dependencies>
     
     <distributionManagement>
