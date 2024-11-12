@@ -25,7 +25,7 @@ jobs:
       - name: maven settings
         uses: s4u/maven-settings-action@v3.1.0
         with: 
-          servers: '[{"id": "nexus-repo", "username": "admin", "password": "Nexusadmin321@"}]' 
+          servers: '[{"id": "nexus-repo", "username": "username", "password": "password"}]' 
           
       - name: Build IKMDEV Code
         uses: ikmdev/maven-clean-install-build-action@v1.1.0
