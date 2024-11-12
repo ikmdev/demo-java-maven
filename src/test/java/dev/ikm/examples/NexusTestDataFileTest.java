@@ -18,8 +18,8 @@ public class NexusTestDataFileTest {
 	@Test
 	public void testDoubleNumber() {
 
-		String userHomeM2Repository = System.getProperty("user.home") + "\\.m2\\repository";
-
+		//String userHomeM2Repository = System.getProperty("user.home") + "\\.m2\\repository";
+		String userHomeM2Repository = System.getProperty("user.home") + "//.m2//repository";
 		
 		System.out.println(userHomeM2Repository);
 
