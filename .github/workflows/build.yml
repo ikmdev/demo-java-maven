@@ -22,6 +22,13 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
+      - name: maven settings
+        uses: s4u/maven-settings-action@v3.1.0
+        with: 
+          servers: '[{"id": "nexus-repo", "username": "admin", "password": "Nexusadmin321@"}]' 
+          
+      - name: Build IKMDEV Code         
+        uses: casaras1/maven-clean-install-build-action@main
       - name: Build IKMDEV Code
         uses: ikmdev/maven-clean-install-build-action@v1.1.0
         with:
@@ -34,3 +41,12 @@ jobs:
           sonarcloud_coverage_jacoco_xmlReportPaths: ${{ 'target/site/jacoco/jacoco.xml' }}
           sonarcloud_java_binaries: ${{ 'target/classes' }}
           sonarcloud_tests: ${{ 'src/test/java' }}
+          
+      # - name: Build IKMDEV Code
+      #   uses: ikmdev/maven-clean-install-build-action@test
+      #   with:
+      #     branch_name: ${{env.BRANCH_NAME}}
+      #     sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
+      #     sonarcloud_host_url: ${{ 'https://sonarcloud.io/' }}
+      #     sonarcloud_organization: "ikmdev"
+      #     sonarcloud_projectKey: "ikmdev_${{ github.event.repository.name }}"

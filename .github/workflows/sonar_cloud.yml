@@ -1,7 +1,3 @@
-name: Sonar Cloud Demo Build Pipeline
-     
-run-name: 'SonarCloud Demo Build Pipeline For ${{github.ref_name}}'
-
 on:
   workflow_dispatch:
 
@@ -11,37 +7,21 @@ on:
 jobs:
   build-job:
     name: Build Job
-    runs-on: self-hosted
+    runs-on: ubuntu-24.04
     steps:
-          - name: Checkout Code Repository
-            uses: actions/checkout@v4
-          - name: Setup Maven Action
-            uses: s4u/setup-maven-action@v1.14.0
-            with:
-                checkout-fetch-depth: 0
-                java-version: 21
-                java-distribution: adopt
-                maven-version: 3.9.0
-          - name: Maven Build
-            if: github.ref == 'refs/heads/main'
-            run: |
-              echo 'Running in main branch'
-              mvn clean install -PcodeQuality
-          - name: Maven Build -- Feature Branch
-            if: github.ref != 'refs/heads/main'
-            run: |
-              echo 'Running in ${{github.ref_name}} branch'
-              mvn clean install -PcodeQuality
-          - name: SonarCloud Build and analyze
-            env:
-              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-              SONAR_HOST_URL: ${{ 'https://sonarcloud.io/' }}
-              SONAR_ORGANIZATION: ${{ 'ikmdev' }}  
-            run: mvn verify sonar:sonar 
-              -Dsonar.organization=${{ github.repository_owner }}
-              -Dsonar.sources=src/main/java 
-              -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} 
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml 
-              -Dsonar.junit.reportPath=target/surefire-reports/*HelloTest*.xml 
-              -Dsonar.java.binaries=target/classes 
-              -Dsonar.tests=src/test/java
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+      - name: IKMDEV build
+        uses: casaras1/maven-clean-install-build-action@main
+        with:
+          sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
+          sonarcloud_host_url: ${{ 'https://sonarcloud.io/' }}
+          sonarcloud_organization: ${{ github.repository_owner }}
+          sonarcloud_sources: ${{ 'src/main/java' }}
+          sonarcloud_projectKey: ${{ github.repository_owner }}_${{ github.event.repository.name }}
+          sonarcloud_coverage_jacoco_xmlReportPaths: ${{ 'target/site/jacoco/jacoco.xml' }}
+          sonarcloud_java_binaries: ${{ 'target/classes' }}
+          sonarcloud_tests: ${{ 'src/test/java' }}        
+          branch_name: ${{env.BRANCH_NAME}}
