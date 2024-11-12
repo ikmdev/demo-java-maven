@@ -38,12 +38,14 @@ jobs:
              TARGET_DIR="$GITHUB_WORKSPACE/target"
              echo "CSV_FILE_PATH= $GITHUB_WORKSPACE/target/test_data-1.0-dev.ikm.data.csv" >> $GITHUB_ENV 
              CSV_FILE="test_data-1.0-dev.ikm.data.csv"
-
+             
              # Create target directory if it doesn't exist
              mkdir -p $TARGET_DIR
 
              # Download the CSV file
              curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" -o "$TARGET_DIR/$CSV_FILE" "$NEXUS_URL"
+             cat $GITHUB_WORKSPACE/target/test_data-1.0-dev.ikm.data.csv
+             cat $GITHUB_ENV
              
         uses: casaras1/maven-clean-install-build-action@main
         with:
