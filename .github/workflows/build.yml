@@ -27,8 +27,6 @@ jobs:
         with: 
           servers: '[{"id": "nexus-repo", "username": "admin", "password": "Nexusadmin321@"}]' 
           
-      - name: Build IKMDEV Code         
-        uses: ikmdev/maven-clean-install-build-action@main
       - name: Build IKMDEV Code
         uses: ikmdev/maven-clean-install-build-action@v1.1.0
         with:
