@@ -60,19 +60,7 @@ jobs:
             echo "CSV file download failed."
             exit 1
           fi
-
-      - name: Upload CSV file
-        uses: actions/upload-artifact@v3
-        with:
-          name: csv-file
-          path: $GITHUB_WORKSPACE/target/test_data-1.0-dev.ikm.data.csv
           
-      - name: Download CSV file
-        uses: actions/download-artifact@v3
-        with: 
-           name: csv-file
-           path:  $GITHUB_WORKSPACE/target
-        
       - name: Build IKMDEV Code
         uses: casaras1/maven-clean-install-build-action@main
         with:
