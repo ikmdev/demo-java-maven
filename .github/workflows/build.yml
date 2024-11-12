@@ -25,56 +25,26 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
-    
-      - name: Set up Nexus credentials
-        env:
-          NEXUS_USERNAME: ${{ 'admin' }}
-          NEXUS_PASSWORD: ${{ 'Nexusadmin321@' }}
-        run: |
-          echo "NEXUS_USERNAME=${NEXUS_USERNAME}" >> $GITHUB_ENV
-          echo "NEXUS_PASSWORD=${NEXUS_PASSWORD}" >> $GITHUB_ENV
-
-      - name: Download CSV from Nexus
-        env:
-          NEXUS_USERNAME: ${{ 'admin' }}
-          NEXUS_PASSWORD: ${{ 'Nexusadmin321@' }}
-        run: |
-          # Define variables
-          NEXUS_URL="https://nexus.tinkarbuild.com/repository/maven-releases/dev/ikm/data/test_data/1.0/test_data-1.0-dev.ikm.data.csv"
-          TARGET_DIR="$GITHUB_WORKSPACE/target"
-          echo "CSV_FILE_PATH= $GITHUB_WORKSPACE/target/test_data-1.0-dev.ikm.data.csv" >> $GITHUB_ENV 
-          CSV_FILE="test_data-1.0-dev.ikm.data.csv"
-
-          # Create target directory if it doesn't exist
-          mkdir -p $TARGET_DIR
-
-          # Download the CSV file
-          curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" -o "$TARGET_DIR/$CSV_FILE" "$NEXUS_URL"
-
-      - name: Verify CSV download
-        run: |
-          if [ -f "$GITHUB_WORKSPACE/target/test_data-1.0-dev.ikm.data.csv" ]; then
-            echo "CSV file downloaded successfully."
-            cat $GITHUB_WORKSPACE/target/test_data-1.0-dev.ikm.data.csv
-          else
-            echo "CSV file download failed."
-            exit 1
-          fi
-          
-      - name: Upload CSV file
-        uses: actions/upload-artifact@v3
-        with:
-          name: csv-file
-          path: /home/runner/work/demo-java-maven/demo-java-maven/target/test_data-1.0-dev.ikm.data.csv
-
-      - name: download CSV file
-        uses: actions/download-artifact@v3
-        with:
-          name: csv-file
-          path: /home/runner/work/demo-java-maven/demo-java-maven/target/
-          
           
       - name: Build IKMDEV Code
+        env:
+          NEXUS_USERNAME: ${{ 'admin' }}
+          NEXUS_PASSWORD: ${{ 'Nexusadmin321@' }}
+          run: |
+             echo "NEXUS_USERNAME=${NEXUS_USERNAME}" >> $GITHUB_ENV
+             echo "NEXUS_PASSWORD=${NEXUS_PASSWORD}" >> $GITHUB_ENV   
+             # Define variables
+             NEXUS_URL="https://nexus.tinkarbuild.com/repository/maven-releases/dev/ikm/data/test_data/1.0/test_data-1.0-dev.ikm.data.csv"
+             TARGET_DIR="$GITHUB_WORKSPACE/target"
+             echo "CSV_FILE_PATH= $GITHUB_WORKSPACE/target/test_data-1.0-dev.ikm.data.csv" >> $GITHUB_ENV 
+             CSV_FILE="test_data-1.0-dev.ikm.data.csv"
+
+             # Create target directory if it doesn't exist
+             mkdir -p $TARGET_DIR
+
+             # Download the CSV file
+             curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" -o "$TARGET_DIR/$CSV_FILE" "$NEXUS_URL"
+             
         uses: casaras1/maven-clean-install-build-action@main
         with:
           branch_name: ${{env.BRANCH_NAME}}
