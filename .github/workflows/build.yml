@@ -31,18 +31,7 @@ jobs:
         with: 
           servers: '[{"id": "nexus-repo", "username": "admin", "password": "Nexusadmin321@"}]' 
           
-      - name: Build IKMDEV Code
-        env:
-          NEXUS_USERNAME: ${{ 'admin' }}
-          NEXUS_PASSWORD: ${{ 'Nexusadmin321@' }}
-          run: |
-            if [ -f "/home/runner/work/demo-java-maven/demo-java-maven/target/test_data-1.0-dev.ikm.data.csv" ]; then
-              echo "CSV file downloaded successfully."
-              cat /home/runner/work/demo-java-maven/demo-java-maven/target/test_data-1.0-dev.ikm.data.csv
-            else
-              echo "CSV file download failed."
-              exit 1
-            fi             
+      - name: Build IKMDEV Code         
         uses: casaras1/maven-clean-install-build-action@main
         with:
           branch_name: ${{env.BRANCH_NAME}}
