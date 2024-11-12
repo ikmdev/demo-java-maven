@@ -33,7 +33,7 @@ jobs:
             [{
                id: "nexus-repo",
                username: "admin",
-               password= "Nexusadmin321@"
+               password: "Nexusadmin321@"
             }]   
           
       - name: Build IKMDEV Code
