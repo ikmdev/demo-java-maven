@@ -21,7 +21,7 @@ public class NexusTestDataFileTest {
 		// String userHomeM2Repository = System.getProperty("user.home") + "\\.m2\\repository";
 
 		String csvFilePath = System.getenv("CSV_FILE_PATH");
-		System.out.println("CSV_FILE_PATH" + userHomeM2Repository);
+		System.out.println("CSV_FILE_PATH");
 
 		// Path to the CSV file in the target/resources directory
 		//String csvFilePath = userHomeM2Repository + "\\dev\\ikm\\data\\test_data\\1.0\\test_data-1.0-dev.ikm.data.csv";
