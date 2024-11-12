@@ -31,8 +31,8 @@ jobs:
         with:
           servers: |
             [{
-               id: "nexus-repo"
-               username: "admin"
+               id: "nexus-repo",
+               username: "admin",
                password= "Nexusadmin321@"
             }]   
           
