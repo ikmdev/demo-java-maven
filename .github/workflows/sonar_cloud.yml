@@ -30,3 +30,4 @@ jobs:
           repo_name: ${{github.event.workflow_run.head_repository.full_name}}
           branch_name: ${{github.event.workflow_run.head_branch}}
           sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
+          sonarcloud_organization: ${{ 'ikmdev' }}
