@@ -19,7 +19,7 @@ jobs:
           distribution: 'zulu'
           
       - name: IKMDEV build
-        uses: kmdev/maven-code-coverage-action@main
+        uses: ikmdev/maven-code-coverage-action@main
         with:
           branch_name: ${{env.BRANCH_NAME}}
           sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
