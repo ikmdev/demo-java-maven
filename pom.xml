@@ -39,6 +39,8 @@
         <sonar.language>java</sonar.language>
         <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
         <sonar.organization>sonarcloudorganizationdev</sonar.organization>
+	<sonar.login>258e8d5920d5f364d22de9f3b6a1cebda9966c35</sonar.login>
+        <sonar.token>258e8d5920d5f364d22de9f3b6a1cebda9966c35</sonar.token> <!--9bf6a80bdb77ad4dd9427f7db4d4318b8d89d264 -->
         <maven.sonarqube.version>3.9.1.2184</maven.sonarqube.version>        
         <sonar.projectKey>ikmdev_demo-java-maven</sonar.projectKey>
         <sonar.language>java</sonar.language>
