@@ -1,3 +1,7 @@
+name: Code Coverage (Sonar Cloud)
+
+run-name: SonarCloud Scan -- ${{github.ref_name}}
+
 on:
   workflow_dispatch:
 
