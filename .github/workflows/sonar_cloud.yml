@@ -18,7 +18,7 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
           
-      - name: IKMDEV build
+      - name: IKMDEV Code Coverage
         uses: ikmdev/maven-code-coverage-action@main
         with:
           branch_name: ${{env.BRANCH_NAME}}
