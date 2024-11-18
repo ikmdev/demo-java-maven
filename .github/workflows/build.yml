@@ -22,10 +22,11 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
+      # settings.xml credentials for Nexus
       - name: maven settings
         uses: s4u/maven-settings-action@v3.1.0
         with: 
-          servers: '[{"id": "nexus-repo", "username": "${{ secrets.NEXUS_USER }}", "password": "${{secrets.EC2_NEXUS_PASSWORD}}"  }]' 
+          servers: '[{"id": "nexus-repo", "username": "${{ secrets.NEXUS_USER_DEMO }}", "password": "${{secrets.NEXUS_PASSWORD_DEMO}}"  }]' 
         
       - name: Build IKMDEV Code
         uses: ikmdev/maven-clean-install-build-action@main
