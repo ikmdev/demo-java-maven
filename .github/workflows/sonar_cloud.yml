@@ -19,11 +19,6 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
-      - name: maven settings
-        uses: s4u/maven-settings-action@v3.1.0
-        with: 
-          servers: '[{"id": "nexus-repo", "username": "${{ secrets.NEXUS_USER }}", "password": "${{secrets.EC2_DEMO_JAVA_NEXUS_PASSWORD}}"  }]' 
-          
       - name: IKMDEV Code Coverage
         uses: ikmdev/maven-code-coverage-action@main
         with:
