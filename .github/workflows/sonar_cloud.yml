@@ -1,4 +1,4 @@
-name: Code Coverage (Sonar Cloud)
+name: Code Coverage (Sonar Cloud - sonar_cloud.yml)
 
 run-name: SonarCloud Scan -- ${{github.ref_name}}
 
