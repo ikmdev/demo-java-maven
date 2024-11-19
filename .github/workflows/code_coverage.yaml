@@ -19,18 +19,12 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
-      - name: Build IKMDEV Code
-        uses: ikmdev/maven-clean-install-build-action@main
-        with:
-          branch_name: ${{env.BRANCH_NAME}}
-          sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
-          sonarcloud_host_url: ${{ 'https://sonarcloud.io/' }}
-          sonarcloud_organization: ${{ github.repository_owner }}
-          sonarcloud_sources: ${{ 'src/main/java' }}
-          sonarcloud_projectKey: ${{ github.repository_owner }}_${{ github.event.repository.name }}
-          sonarcloud_coverage_jacoco_xmlReportPaths: ${{ 'target/site/jacoco/jacoco.xml' }}
-          sonarcloud_java_binaries: ${{ 'target/classes' }}
-          sonarcloud_tests: ${{ 'src/test/java' }}
+    # settings.xml credentials for Nexus      
+      - name: maven settings        
+        uses: s4u/maven-settings-action@v3.1.0        
+        with:           
+          servers: '[{"id": "nexus-repo", "username": "${{ secrets.NEXUS_USER_DEMO }}", "password": "${{secrets.NEXUS_PASSWORD_DEMO}}"  }]' 
+
 
       - name: IKMDEV Code Coverage
         uses: ikmdev/maven-code-coverage-action@main
