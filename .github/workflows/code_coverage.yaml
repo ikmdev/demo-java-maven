@@ -31,7 +31,7 @@ jobs:
           branch_name: ${{env.BRANCH_NAME}}
           
       - name: IKMDEV Code Coverage
-        uses: casaras1/maven-code-coverage-action@main
+        uses: ikmdev/maven-code-coverage-action@main
         with:
           repo_name: ${{github.event.workflow_run.head_repository.full_name}}
           branch_name: ${{github.event.workflow_run.head_branch}}
