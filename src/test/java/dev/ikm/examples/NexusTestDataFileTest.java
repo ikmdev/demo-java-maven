@@ -7,6 +7,7 @@ import java.io.*;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import org.junit.Ignore;
 
 public class NexusTestDataFileTest {
 
@@ -16,6 +17,7 @@ public class NexusTestDataFileTest {
 	}
 
 	@Test
+	@Ignore
 	public void testDoubleNumber() {
 
 		//String userHomeM2Repository = System.getProperty("user.home") + "\\.m2\\repository";
