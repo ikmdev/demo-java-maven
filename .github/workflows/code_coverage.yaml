@@ -25,10 +25,16 @@ jobs:
         with:           
           servers: '[{"id": "nexus-repo", "username": "${{ secrets.NEXUS_USER_DEMO }}", "password": "${{secrets.NEXUS_PASSWORD_DEMO}}"  }]' 
 
-      - name: Build IKMDEV Code
-        uses: ikmdev/maven-clean-install-build-action@main
-        with:
-          branch_name: ${{env.BRANCH_NAME}}
+      - name: Maven Build
+        # if: github.event.repository.name != 'reasoner-test-data' && (inputs.branch_name == 'main' || inputs.branch_name == 'master')
+        shell: bash
+        run: |
+          ./mvnw clean install -U \
+            --batch-mode \
+            -e \
+            -Dmaven.build.cache.enabled=false \
+            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+            -PcodeQuality
           
       - name: IKMDEV Code Coverage
         uses: ikmdev/maven-code-coverage-action@main
