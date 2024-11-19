@@ -22,7 +22,7 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
-      # settings.xml credentials for Nexus -- for now this is to stay commented out
+      # settings.xml credentials for Nexus
 #      - name: maven settings
 #        uses: s4u/maven-settings-action@v3.1.0    
 #        with: 
