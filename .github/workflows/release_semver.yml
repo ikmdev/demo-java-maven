@@ -8,9 +8,10 @@ on:
       version_type:
         description: 'Version type to increment'
         required: true
-        default: 'patch'
+        default: 'select'
         type: choice
         options:
+          - select
           - major
           - minor
           - patch
