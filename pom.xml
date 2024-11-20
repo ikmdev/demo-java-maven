@@ -12,6 +12,8 @@
     </description>
     <packaging>jar</packaging>
 
+	<!-- Test -->
+
 	<repositories>
         <repository>
             <id>nexus-repo</id>
