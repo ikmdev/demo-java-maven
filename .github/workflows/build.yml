@@ -4,8 +4,8 @@ run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
 
 # Pipeline/Workflow Triggers for the test demo
 on:
-  push:
-  pull_request:
+#  push:
+#  pull_request:
   workflow_dispatch:
 
 env:
