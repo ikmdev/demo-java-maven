@@ -5,7 +5,7 @@ run-name: "Releasing ${{ github.event.repository.name }} #${{ github.run_number 
 on:
   workflow_dispatch:
     inputs:
-      version_type:
+      action:
         type: choice
         description: 'Version type to increment (Major, Minor, Patch)'
         options:
