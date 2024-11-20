@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version_type:
+        type: choice
         description: 'Version type to increment (Major, Minor, Patch)'
         options:
           - Major
