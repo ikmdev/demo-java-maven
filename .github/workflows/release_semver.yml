@@ -11,9 +11,9 @@ on:
         default: 'patch'
         type: choice
         options:
-          - Major
-          - Minor
-          - Patch
+          - major
+          - minor
+          - patch
       set_version:
         description: 'Set version number explicitly (e.g., 1.2.3). Leave empty to increment.'
         required: false
