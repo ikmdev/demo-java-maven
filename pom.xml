@@ -212,6 +212,66 @@
 
     <profiles>
         <profile>
+            <id>source-resources-additional-tasks</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/src/main/resources</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>jar-resources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <classesDirectory>${basedir}/src/main/resources</classesDirectory>
+                                    <classifier>resources</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>test-resources-additional-tasks</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/src/test/resources</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>jar-test-resources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <classesDirectory>${basedir}/src/test/resources</classesDirectory>
+                                    <classifier>test-resources</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
             <id>codeQuality</id>
             <build>
                 <plugins>
@@ -288,6 +348,53 @@
                                             <type>asc</type>
                                         </artifact>
                                     </artifacts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>release-enforcement</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-no-snapshots</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireReleaseDeps>
+                                            <message>No Snapshots Allowed!</message>
+                                            <failWhenParentIsSnapshot>true</failWhenParentIsSnapshot>
+                                        </requireReleaseDeps>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>enforce-no-bad-sections</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <banDynamicVersions>
+                                            <allowSnapshots>false</allowSnapshots>
+                                        </banDynamicVersions>
+                                    </rules>
+                                    <fail>true</fail>
                                 </configuration>
                             </execution>
                         </executions>
