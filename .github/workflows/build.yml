@@ -2,7 +2,7 @@ name: Build Workflow
 
 run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'   
 
-# Pipeline/Workflow Triggers for TEST case --- Cas
+# Pipeline/Workflow Triggers 
 on:
  push:
  pull_request:
