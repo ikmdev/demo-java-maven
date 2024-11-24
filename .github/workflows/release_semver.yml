@@ -29,6 +29,12 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.repository_owner == 'ikmdev'
     steps:
+      - name: Verify Input
+        if: inputs.version_type == 'select'
+        run: |
+          echo "ERROR: Please enter version type"
+          exit 1
+          
       - name: Verify Branch
         if: env.BRANCH_NAME != env.TRUNK_BRANCH_NAME
         run: |
