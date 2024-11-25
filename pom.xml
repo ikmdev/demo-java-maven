@@ -506,8 +506,8 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <doclint>none</doclint>
-                            <source>${java.version}</source>
-                            <release>${java.version}</release>
+                            <source>21</source>
+                            <release>21</release>
                         </configuration>
                         <executions>
                             <execution>
