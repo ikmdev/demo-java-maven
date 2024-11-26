@@ -12,21 +12,6 @@
     </description>
     <packaging>jar</packaging>
 
-<!--	<repositories>-->
-<!--        <repository>-->
-<!--            <id>nexus-repo</id>-->
-<!--            <url>https://nexus.tinkarbuild.com/repository/maven-releases/</url>-->
-<!--			-->
-<!--			<releases>-->
-<!--                <enabled>true</enabled>-->
-<!--            </releases>-->
-
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>       -->
-<!--        </repository>-->
-<!--    </repositories>-->
-
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -64,6 +49,7 @@
 		<configuration-root>src/main/java</configuration-root>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <java.version>21</java.version>
         <maven.deploy-plugin.version>3.1.2</maven.deploy-plugin.version>
         <maven-mojo-license-plugin.version>2.10.0</maven-mojo-license-plugin.version>
         <maven.versions.plugin>2.18.0</maven.versions.plugin>
@@ -506,8 +492,8 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <doclint>none</doclint>
-                            <source>21</source>
-                            <release>21</release>
+                            <source>${java.version}</source>
+                            <release>${java.version}</release>
                         </configuration>
                         <executions>
                             <execution>

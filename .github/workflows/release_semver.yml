@@ -27,29 +27,28 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-24.04
-    if: github.repository_owner == 'ikmdev'
+    if: ${{ github.repository_owner == 'ikmdev' }}
     steps:
       - name: Verify Input
-        if: inputs.version_type == 'select'
+        if: ${{ inputs.version_type == 'select' }}
         run: |
-          echo "ERROR: Please enter version type"
+          echo "ERROR: Please select a valid version type (major, minor, patch)."
           exit 1
-          
+
       - name: Verify Branch
-        if: env.BRANCH_NAME != env.TRUNK_BRANCH_NAME
+        if: ${{ env.BRANCH_NAME != env.TRUNK_BRANCH_NAME }}
         run: |
           echo "ERROR: Attempting to release from branch ${{ env.BRANCH_NAME }}. Release from ${{ env.TRUNK_BRANCH_NAME }} branch only."
           exit 1
 
-      - name: Shared Release Action
+      - name: Execute SemVer Release Action
         uses: ikmdev/maven-semver-release-action@main
         with:
           version_type: ${{ github.event.inputs.version_type }}
           set_version: ${{ github.event.inputs.set_version }}
-          ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
-          ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
-          gpg_key: ${{secrets.GPG_KEY}}
-          gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
-          trunk_branch_name: ${{ env.TRUNK_BRANCH_NAME }}
+          ikmdevops_pat: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          ossrh_username: ${{ secrets.OSSRH_TOKEN_USER }}
+          ossrh_token: ${{ secrets.OSSRH_TOKEN_PASS }}
+          gpg_key: ${{ secrets.GPG_KEY }}
+          gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
