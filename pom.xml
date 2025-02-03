@@ -91,51 +91,12 @@
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>5.5.2</version>
-        </dependency>
-<!--    		
-			<dependency>
-  				<groupId>dev.ikm.data</groupId>
-  				<artifactId>test_data</artifactId>
-  				<version>1.0</version>
-  				<classifier>dev.ikm.data</classifier>
-  				<type>csv</type>
-			</dependency> 
--->		
+        </dependency>	
 	</dependencies>
 
    <build>
 		<pluginManagement>
-			<plugins>
-			
-<!--				
-		        <plugin>
-		            <groupId>org.apache.maven.plugins</groupId>
-		            <artifactId>maven-dependency-plugin</artifactId>
-		            <version>3.1.2</version>
-		            <executions>
-		                <execution>
-		                    <id>copy-csv</id>
-		                    <phase>process-resources</phase>
-		                    <goals>
-		                        <goal>copy</goal>
-		                    </goals>
-		
-		                    <configuration>
-		                        <artifactItems>
-		                            <artifactItem>
-		                                <groupId>dev.ikm.data</groupId>
-		                                <artifactId>test_data</artifactId>
-		                                <version>1.0</version>
-		                                <type>csv</type>
-		                                <outputDirectory>${project.build.directory}/test_data</outputDirectory>
-		                                <destFileName>test_data.csv</destFileName>
-		                            </artifactItem>
-		                        </artifactItems>
-		                    </configuration>
-		                </execution>
-		            </executions>
-		        </plugin>
--->				
+			<plugins>			
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>

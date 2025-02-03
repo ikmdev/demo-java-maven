@@ -42,7 +42,7 @@ jobs:
           exit 1
 
       - name: Execute SemVer Release Action
-        uses: ikmdev/maven-semver-release-action@main
+        uses: ikmdev/maven-semver-release-action@v2
         with:
           version_type: ${{ github.event.inputs.version_type }}
           set_version: ${{ github.event.inputs.set_version }}
