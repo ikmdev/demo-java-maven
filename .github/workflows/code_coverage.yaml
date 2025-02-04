@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:          
       - name: IKMDEV Code Coverage
-        uses: ikmdev/maven-code-coverage-action@feature/java23
+        uses: ikmdev/maven-code-coverage-action@v2
         with:
           repo_name: ${{github.event.workflow_run.head_repository.full_name}}
           branch_name: ${{github.event.workflow_run.head_branch}}
