@@ -54,15 +54,15 @@
         <maven-mojo-license-plugin.version>2.10.0</maven-mojo-license-plugin.version>
         <maven.versions.plugin>2.18.0</maven.versions.plugin>
 
-        <maven.gpg-plugin.version>3.1.0</maven.gpg-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <maven.gpg-plugin.version>3.2.7</maven.gpg-plugin.version>
+        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <sonar.skip>false</sonar.skip>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
         <sonar.language>java</sonar.language>
         <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
         <sonar.organization>sonarcloudorganizationdev</sonar.organization>
-        <maven.sonarqube.version>3.9.1.2184</maven.sonarqube.version>        
+        <maven.sonarqube.version>5.0.0.4389</maven.sonarqube.version>        
         <sonar.projectKey>ikmdev_demo-java-maven</sonar.projectKey>
         <sonar.language>java</sonar.language>
         <sonar.organization>ikmdev</sonar.organization>
@@ -74,7 +74,7 @@
 				<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.13.1</version>
+				<version>4.13.2</version>
 				<scope>test</scope>
 			</dependency>		
 		</dependencies>
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>5.5.2</version>
+            <version>5.10</version>
         </dependency>	
 	</dependencies>
 
@@ -269,7 +269,7 @@
 				    </plugin>				        
 	                <plugin>
 	                    <artifactId>maven-surefire-plugin</artifactId>
-	                    <version>3.2.5</version>
+	                    <version>3.5.2</version>
 	                </plugin>
                                     
                 </plugins>
