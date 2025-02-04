@@ -13,20 +13,9 @@ jobs:
   code-coverage:
     name: Code Coverage
     runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '23'
-          distribution: 'zulu'
-
-    # settings.xml credentials for Nexus      
-    #  - name: maven settings        
-    #    uses: s4u/maven-settings-action@v3.1.0        
-    #    with:           
-    #      servers: '[{"id": "nexus-repo", "username": "${{ secrets.NEXUS_USER_DEMO }}", "password": "${{secrets.NEXUS_PASSWORD_DEMO}}"  }]' 
-          
+    steps:          
       - name: IKMDEV Code Coverage
-        uses: ikmdev/maven-code-coverage-action@main
+        uses: ikmdev/maven-code-coverage-action@feature/java23
         with:
           repo_name: ${{github.event.workflow_run.head_repository.full_name}}
           branch_name: ${{github.event.workflow_run.head_branch}}
