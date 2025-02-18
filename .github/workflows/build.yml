@@ -21,5 +21,5 @@ jobs:
         uses: ikmdev/maven-clean-install-build-action@options
         with:
           branch_name: ${{env.BRANCH_NAME}}
-#          skip_setup: true
+          skip_setup: true
           
