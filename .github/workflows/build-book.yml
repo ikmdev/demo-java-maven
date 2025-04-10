@@ -1,6 +1,4 @@
-name: Build Workflow
-
-run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'   
+name: DocBook build
 on:
  push:
  pull_request:
