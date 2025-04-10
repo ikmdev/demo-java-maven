@@ -15,6 +15,4 @@ jobs:
     steps:
       - name: Build Docbook
         run: mvn clean install -U -D'maven.build.cache.enabled=false'
-        with:
-          branch_name: ${{env.BRANCH_NAME}}
-          preform_setup: false
+        
