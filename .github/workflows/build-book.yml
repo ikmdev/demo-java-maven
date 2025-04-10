@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Build Docbook
-        uses: ikmdev/maven-clean-install-build-action@options
+        run: mvn clean install -U -D'maven.build.cache.enabled=false'
         with:
           branch_name: ${{env.BRANCH_NAME}}
           preform_setup: false
